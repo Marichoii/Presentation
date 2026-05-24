@@ -1,28 +1,58 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Arquiteturas Híbridas · IBM</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Serif:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&display=swap" rel="stylesheet"/>
+<title>Arquiteturas Híbridas · CEUB</title>
 <style>
+@font-face {
+  font-family:'dT Jakob';
+  src:url('./assets/fonts/dT Jakob Web/dTJakob_Rg.woff') format('woff');
+  font-weight:400;
+  font-style:normal;
+  font-display:swap;
+}
+@font-face {
+  font-family:'dT Jakob';
+  src:url('./assets/fonts/dT Jakob Web/dTJakob_Sb.woff') format('woff');
+  font-weight:600;
+  font-style:normal;
+  font-display:swap;
+}
+@font-face {
+  font-family:'dT Jakob';
+  src:url('./assets/fonts/dT Jakob Web/dTJakob_Bd.woff') format('woff');
+  font-weight:700;
+  font-style:normal;
+  font-display:swap;
+}
+@font-face {
+  font-family:'dT Jakob';
+  src:url('./assets/fonts/dT Jakob Web/dTJakob_RgIt.woff') format('woff');
+  font-weight:400;
+  font-style:italic;
+  font-display:swap;
+}
 /* ═══════════════════════════════════════════
-   TOKENS — IBM Carbon v11 White theme
+   TOKENS — CEUB palette
 ═══════════════════════════════════════════ */
 :root {
   --gray-10:#f4f4f4; --gray-20:#e0e0e0; --gray-30:#c6c6c6;
   --gray-40:#a8a8a8; --gray-50:#8d8d8d; --gray-60:#6f6f6f;
   --gray-70:#525252; --gray-80:#393939; --gray-90:#262626; --gray-100:#161616;
-  --blue-10:#edf5ff; --blue-20:#d0e2ff; --blue-30:#a6c8ff;
-  --blue-40:#78a9ff; --blue-50:#4589ff; --blue-60:#0f62fe;
-  --blue-70:#0043ce; --blue-80:#002d9c; --blue-90:#001d6c; --blue-100:#001141;
-  --cyan-40:#33b1ff; --cyan-50:#1192e8;
-  --teal-40:#08bdba; --teal-50:#009d9a;
-  --purple-40:#be95ff; --purple-50:#a56eff; --purple-60:#8a3ffc;
+  --ceub-dark:#43054e;
+  --ceub-purple:#662c92;
+  --ceub-lilac:#bf0087;
+  --ceub-magenta:#ec0089;
+  --ceub-yellow:#fde100;
+  --blue-10:#fff0f9; --blue-20:#ffd6ef; --blue-30:#f7a8d8;
+  --blue-40:#ec0089; --blue-50:#bf0087; --blue-60:#662c92;
+  --blue-70:#43054e; --blue-80:#35033d; --blue-90:#43054e; --blue-100:#26022c;
+  --cyan-40:#fde100; --cyan-50:#d5be00;
+  --teal-40:#bf0087; --teal-50:#9d006f;
+  --purple-40:#c584df; --purple-50:#662c92; --purple-60:#43054e;
   --green-40:#42be65; --green-50:#24a148;
-  --yellow-30:#f1c21b;
+  --yellow-30:#fde100;
 
   --bg:#ffffff;
   --layer-01:#f4f4f4;
@@ -32,14 +62,14 @@
   --text:#161616;
   --text-2:#525252;
   --text-3:#6f6f6f;
-  --ibm:#0f62fe;
+  --ibm:#ec0089;
 
   /* 3 font sizes only */
   --fs-sm:  13px;
-  --fs-md:  18px;
-  --fs-lg:  clamp(2.4rem, 5vw, 4.8rem);
+  --fs-md:  clamp(16px, 1.35vw, 18px);
+  --fs-lg:  clamp(2.2rem, 5vw, 4.7rem);
 
-  --sans: 'IBM Plex Sans', system-ui, sans-serif;
+  --sans: 'dT Jakob', system-ui, sans-serif;
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
   --ease-in: cubic-bezier(0.64, 0, 0.78, 0);
 }
@@ -75,7 +105,9 @@ body {
   justify-content: space-between;
   padding: 0 40px;
   border-bottom: 1px solid var(--border);
-  background: var(--bg);
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   z-index: 30;
   flex-shrink: 0;
 }
@@ -88,6 +120,12 @@ body {
   color: var(--text-3);
   letter-spacing: 0.01em;
 }
+.brand-logo {
+  width:82px;
+  height:auto;
+  display:block;
+}
+.brand > svg { display:none; }
 .brand-sep { width:1px; height:14px; background:var(--border); }
 .counter   { font-size:var(--fs-sm); font-weight:500; color:var(--text-3); letter-spacing:0.04em; }
 .counter b { color:var(--ibm); font-weight:600; }
@@ -101,7 +139,7 @@ body {
   inset: 0;
   display: flex;
   flex-direction: column;
-  padding: 56px 40px 40px;
+  padding: clamp(28px, 5vh, 56px) clamp(28px, 4vw, 52px) clamp(24px, 4vh, 40px);
   background: var(--bg);
   opacity: 0;
   pointer-events: none;
@@ -184,14 +222,7 @@ body {
 .slide.active .draw-line:nth-child(2n) { animation-delay: 200ms; }
 @keyframes draw { to { stroke-dashoffset: 0; } }
 
-/* Pulse dot */
-@keyframes pulse { 0%,100%{opacity:1;r:5px} 50%{opacity:0.3;r:8px} }
-.pulse-dot { animation: pulse 2.5s ease-in-out infinite; }
-.pulse-dot:nth-child(2) { animation-delay: 0.6s; }
-.pulse-dot:nth-child(3) { animation-delay: 1.2s; }
-.pulse-dot:nth-child(4) { animation-delay: 1.8s; }
-
-/* IBM dash flow */
+/* Brand dash flow */
 .dash-flow { stroke-dasharray:4 6; animation: dash-move 8s linear infinite; }
 @keyframes dash-move { to{stroke-dashoffset:-200} }
 
@@ -219,10 +250,10 @@ body {
   font-size: var(--fs-lg);
   font-weight: 300;
   color: var(--text);
-  line-height: 1.0;
+  line-height: 1.08;
   letter-spacing: -0.02em;
 }
-.t-heading strong { font-family: 'IBM Plex Serif', Georgia, serif; font-weight: 600; font-style: italic; color: var(--ibm); }
+.t-heading strong { font-family: var(--sans); font-weight: 700; font-style: italic; color: var(--ibm); }
 
 /* eyebrow — uses label size */
 .eyebrow {
@@ -239,7 +270,7 @@ body {
 .eyebrow::before { content:''; width:24px; height:2px; background:var(--ibm); flex-shrink:0; }
 
 /* ═══════════════════════════════════════════
-   IBM DESIGN COMPONENTS
+   CEUB DESIGN COMPONENTS
 ═══════════════════════════════════════════ */
 /* Accent rule */
 .rule { display:block; height:3px; background:var(--ibm); }
@@ -249,7 +280,7 @@ body {
 .rule.green  { background:var(--green-40); }
 .rule.yellow { background:var(--yellow-30); }
 
-/* IBM corner bracket */
+/* CEUB corner bracket */
 .bracket { position:relative; }
 .bracket::before {
   content:'';
@@ -284,7 +315,7 @@ body {
 .meter-fill.teal   { background:var(--teal-40); }
 .meter-fill.purple { background:var(--purple-50); }
 
-/* ── IBM 8-bar texture ──────────────── */
+/* ── Brand line texture ──────────────── */
 .ibm-bars {
   position:absolute; inset:0; pointer-events:none;
   background-image: repeating-linear-gradient(
@@ -315,14 +346,14 @@ body {
 .cover-slide {
   padding:0 !important;
   display:grid !important;
-  grid-template-columns: 58% 42%;
+  grid-template-columns: minmax(520px, 54%) minmax(420px, 46%);
 }
 
 .cover-left {
-  padding:64px 48px;
+  padding:clamp(44px, 6vh, 78px) clamp(42px, 5vw, 78px);
   display:flex;
   flex-direction:column;
-  justify-content:flex-end;
+  justify-content:center;
   border-right:1px solid var(--border);
   overflow:hidden;
 }
@@ -330,6 +361,7 @@ body {
 .cover-left .t-heading { opacity:0; animation: rise 600ms 200ms var(--ease) forwards; }
 .cover-left .t-body    { opacity:0; animation: rise 500ms 320ms var(--ease) forwards; margin-top:24px; max-width:500px; }
 .cover-left .cover-meta { opacity:0; animation: rise 500ms 420ms var(--ease) forwards; margin-top:48px; }
+.cover-left .cover-team { opacity:0; animation: rise 500ms 420ms var(--ease) forwards; }
 
 .cover-meta {
   display:grid;
@@ -338,6 +370,7 @@ body {
   gap:1px;
   background:var(--border);
   border:1px solid var(--border);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.06);
 }
 .cover-meta-cell {
   background:var(--layer-01);
@@ -345,6 +378,24 @@ body {
 }
 .cover-meta-cell .t-label { display:block; margin-bottom:3px; }
 .cover-meta-cell .val { font-size:var(--fs-sm); font-weight:600; color:var(--text); line-height:1.3; }
+.cover-team {
+  margin-top:clamp(30px, 6vh, 56px);
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  max-width:620px;
+}
+.cover-person {
+  display:inline-flex;
+  align-items:center;
+  min-height:30px;
+  padding:0 12px;
+  border:1px solid var(--border);
+  background:var(--layer-01);
+  color:var(--text);
+  font-size:var(--fs-sm);
+  font-weight:600;
+}
 
 .cover-right {
   background:var(--blue-90);
@@ -352,7 +403,7 @@ body {
   overflow:hidden;
   display:flex;
   flex-direction:column;
-  padding:48px 40px;
+  padding:clamp(34px, 5vh, 58px) clamp(28px, 4vw, 52px);
 }
 .cover-right .ibm-bars, .cover-right .ibm-dots { display:block; }
 .cover-right-inner {
@@ -363,11 +414,11 @@ body {
   height:100%;
 }
 .cover-big-num {
-  font-size:clamp(8rem,22vw,20rem);
+  font-size:clamp(9rem,24vw,22rem);
   font-weight:300;
   line-height:1;
   letter-spacing:-6px;
-  color:rgba(255,255,255,0.03);
+  color:rgba(255,255,255,0.06);
   position:absolute;
   bottom:-0.08em; right:-0.04em;
   user-select:none;
@@ -379,9 +430,24 @@ body {
   align-items:center;
   justify-content:center;
   opacity:0;
-  animation: fade-scale 700ms 300ms var(--ease) forwards;
+  animation: fade-scale 520ms 260ms var(--ease) forwards;
 }
-.net-area svg { width:100%; max-width:360px; height:auto; overflow:visible; }
+.net-area svg { width:100%; max-width:380px; height:auto; overflow:visible; }
+.cover-line {
+  position:absolute;
+  left:0;
+  right:0;
+  height:1px;
+  background:linear-gradient(90deg, transparent, rgba(253,225,0,0.55), transparent);
+  opacity:0;
+  animation: cover-line-in 700ms var(--ease) forwards;
+}
+.cover-line.one { top:28%; animation-delay:180ms; }
+.cover-line.two { top:62%; animation-delay:280ms; }
+@keyframes cover-line-in {
+  from { opacity:0; transform:scaleX(0.4); }
+  to { opacity:1; transform:scaleX(1); }
+}
 
 .cover-chips {
   display:grid;
@@ -400,6 +466,21 @@ body {
 .cover-chip:hover { background:var(--blue-80); }
 .cover-chip .t-label { color:var(--blue-30); display:block; margin-bottom:4px; }
 .cover-chip .val { font-size:var(--fs-md); font-weight:500; color:#fff; }
+.cover-note {
+  margin-top:18px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-size:var(--fs-sm);
+  color:var(--text-3);
+}
+.cover-note::before {
+  content:'';
+  width:28px;
+  height:2px;
+  background:var(--ibm);
+  flex-shrink:0;
+}
 
 /* ═══════════════════════════════════════════
    SLIDE 2 · INTRODUÇÃO
@@ -417,6 +498,7 @@ body {
   padding:32px 28px;
   position:relative;
   overflow:hidden;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.12);
   opacity:0;
   animation: slide-in-r 540ms 280ms var(--ease) forwards;
 }
@@ -553,6 +635,7 @@ body {
   border:1px solid var(--border);
   border-left:3px solid var(--ibm);
   padding:24px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
   opacity:0;
   animation: rise 500ms 340ms var(--ease) forwards;
 }
@@ -603,6 +686,101 @@ body {
   position:absolute; left:0; top:0.55em;
   width:10px; height:2px;
   background:var(--ibm);
+}
+
+.dev-accordion {
+  margin-top:28px;
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  grid-template-rows:auto minmax(0,1fr);
+  gap:1px;
+  background:var(--border);
+  border:1px solid var(--border);
+  flex:1;
+  min-height:0;
+  opacity:0;
+  animation: rise 520ms 180ms var(--ease) forwards;
+}
+.dev-panel {
+  min-width:0;
+  background:#fff;
+  display:contents;
+}
+.dev-tab {
+  appearance:none;
+  border:0;
+  background:#fff;
+  padding:18px;
+  text-align:left;
+  cursor:pointer;
+  display:grid;
+  grid-template-columns:auto 1fr;
+  gap:12px;
+  align-items:center;
+  font-family:var(--sans);
+  min-width:0;
+}
+.dev-tab:hover { background:var(--blue-10); }
+.dev-panel.is-open .dev-tab {
+  background:var(--blue-90);
+}
+.dev-panel.is-open .dev-tab-title,
+.dev-panel.is-open .dev-index {
+  color:#fff;
+}
+.dev-panel.is-open .dev-index {
+  border-color:rgba(255,255,255,0.28);
+  background:rgba(255,255,255,0.12);
+}
+.dev-index {
+  width:34px;
+  height:34px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border:1px solid var(--blue-20);
+  background:var(--blue-10);
+  color:var(--ibm);
+  font-size:var(--fs-sm);
+  font-weight:700;
+}
+.dev-tab-title {
+  font-size:var(--fs-md);
+  font-weight:500;
+  color:var(--text);
+  line-height:1.2;
+}
+.dev-content {
+  display:none;
+  grid-column:1 / -1;
+  padding:24px;
+  background:var(--layer-01);
+  min-height:0;
+  overflow:hidden;
+}
+.dev-panel.is-open .dev-content {
+  display:flex;
+  flex-direction:column;
+  gap:18px;
+  animation: fade-scale 260ms var(--ease) forwards;
+}
+.dev-panel .flow-row {
+  margin:0;
+  animation:none;
+  opacity:1;
+}
+.dev-panel .info-box,
+.dev-panel .diagram-box,
+.dev-panel .col-text {
+  animation:none;
+  opacity:1;
+}
+.dev-panel .diagram-box {
+  min-height:210px;
+}
+.dev-panel .two-col {
+  gap:20px;
+  flex:0;
 }
 
 /* ═══════════════════════════════════════════
@@ -806,7 +984,9 @@ body {
   display:flex; align-items:center; justify-content:space-between;
   padding:0 40px;
   border-top:1px solid var(--border);
-  background:var(--bg);
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   z-index:30; flex-shrink:0;
 }
 .ctrl-btn {
@@ -819,128 +999,39 @@ body {
   border:1px solid var(--border);
   color:var(--text-2);
   cursor:pointer;
-  transition:background 150ms, border-color 150ms, color 150ms;
+  transition:background 150ms, border-color 150ms, color 150ms, box-shadow 150ms;
 }
-.ctrl-btn:hover:not(:disabled) { background:var(--ibm); border-color:var(--ibm); color:#fff; }
+.ctrl-btn:hover:not(:disabled) { background:var(--ibm); border-color:var(--ibm); color:#fff; box-shadow: 0 2px 8px rgba(15,98,254,0.25); }
+.ctrl-btn:focus-visible { outline:2px solid var(--ibm); outline-offset:2px; }
 .ctrl-btn:disabled { opacity:0.25; cursor:not-allowed; }
 
 .dots { display:flex; align-items:center; gap:6px; }
 .dot {
   width:6px; height:6px; background:var(--layer-02); cursor:pointer;
   transition:background 200ms, width 200ms;
-  border-radius:0;
+  border-radius:3px;
 }
-.dot.active { background:var(--ibm); width:22px; }
+.dot.active { background:var(--ibm); width:22px; border-radius:3px; }
 .dot:hover:not(.active) { background:var(--gray-40); }
 
 .progress-rail { height:4px; background:var(--layer-02); flex-shrink:0; }
-.progress-fill { height:100%; background:var(--ibm); transition:width 420ms var(--ease); }
+.progress-fill { height:100%; background: linear-gradient(90deg, var(--blue-70), var(--blue-40)); transition:width 420ms var(--ease); }
 
 
 /* ═══════════════════════════════════════════
-   SLIDE AGENDA
+   RESPONSIVE — 5 breakpoints
 ═══════════════════════════════════════════ */
-.agenda-layout {
-  display:grid;
-  grid-template-columns:1.4fr 0.6fr;
-  gap:32px;
-  flex:1;
-  align-items:start;
-  min-height:0;
-}
-.agenda-list {
-  display:flex;
-  flex-direction:column;
-  gap:0;
-}
-.agenda-item {
-  display:grid;
-  grid-template-columns:48px 1fr auto;
-  align-items:center;
-  gap:20px;
-  padding:14px 0;
-  border-bottom:1px solid var(--border);
-  position:relative;
-  transition:background 160ms;
-  cursor:default;
-}
-.agenda-item:first-child { border-top:1px solid var(--border); }
-.agenda-item::before {
-  content:'';
-  position:absolute;
-  left:-40px; top:0; bottom:0;
-  width:0;
-  background:var(--ibm);
-  transition:width 200ms var(--ease);
-}
-.agenda-item:hover::before { width:3px; }
-.agenda-item:hover { background:var(--layer-01); margin:0 -40px; padding-left:40px; padding-right:40px; }
-.agenda-num {
-  font-size:var(--fs-sm);
-  font-weight:700;
-  color:var(--ibm);
-  letter-spacing:0.08em;
-  line-height:1;
-}
-.agenda-body { display:flex; flex-direction:column; gap:3px; }
-.agenda-title {
-  font-size:var(--fs-md);
-  font-weight:500;
-  color:var(--text);
-  line-height:1.2;
-}
-.agenda-sub {
-  font-size:var(--fs-sm);
-  color:var(--text-3);
-  font-weight:400;
-}
-.agenda-tag {
-  font-size:var(--fs-sm);
-  font-weight:500;
-  color:var(--text-3);
-  text-align:right;
-  white-space:nowrap;
-  opacity:0.6;
-}
-.agenda-info { display:flex; flex-direction:column; }
-.agenda-meta-card {
-  background:var(--layer-01);
-  border:1px solid var(--border);
-  padding:20px;
-  position:relative;
-}
-.agenda-meta-card::before {
-  content:'';
-  position:absolute;
-  top:0; left:0;
-  width:10px; height:10px;
-  border-top:2px solid var(--ibm);
-  border-left:2px solid var(--ibm);
-}
-.agenda-presenters {
-  display:flex;
-  flex-direction:column;
-  gap:6px;
-}
-.agenda-presenters span {
-  font-size:var(--fs-sm);
-  font-weight:500;
-  color:var(--text);
-  line-height:1.3;
+@media (max-width: 1180px) {
+  .cover-slide { grid-template-columns: minmax(430px, 52%) minmax(360px, 48%); }
+  .cover-left { padding:44px 36px; }
+  .cover-right { padding:34px 28px; }
+  .net-area svg { max-width:310px; }
+  .four-grid { gap:1px; }
+  .block-card { padding:22px 18px; }
+  .tradeoff-grid, .ex-grid { gap:1px; }
 }
 
-/* stagger agenda items */
-.slide.active .agenda-list .agenda-item:nth-child(1) { animation:rise 500ms  80ms var(--ease) forwards; opacity:0; transform:translateY(16px); }
-.slide.active .agenda-list .agenda-item:nth-child(2) { animation:rise 500ms 140ms var(--ease) forwards; opacity:0; transform:translateY(16px); }
-.slide.active .agenda-list .agenda-item:nth-child(3) { animation:rise 500ms 200ms var(--ease) forwards; opacity:0; transform:translateY(16px); }
-.slide.active .agenda-list .agenda-item:nth-child(4) { animation:rise 500ms 260ms var(--ease) forwards; opacity:0; transform:translateY(16px); }
-.slide.active .agenda-list .agenda-item:nth-child(5) { animation:rise 500ms 320ms var(--ease) forwards; opacity:0; transform:translateY(16px); }
-.slide.active .agenda-list .agenda-item:nth-child(6) { animation:rise 500ms 380ms var(--ease) forwards; opacity:0; transform:translateY(16px); }
-
-/* ═══════════════════════════════════════════
-   RESPONSIVE — 4 breakpoints
-═══════════════════════════════════════════ */
-@media (max-width: 1100px) {
+@media (max-width: 960px) {
   .cover-slide { grid-template-columns:1fr; }
   .cover-right { display:none; }
   .cover-left  { padding:48px 32px; border-right:none; justify-content:center; }
@@ -948,18 +1039,46 @@ body {
   :root        { --fs-lg: clamp(2rem,4.5vw,3.5rem); }
 }
 
+@media (min-width: 961px) and (max-height: 760px) {
+  .shell { grid-template-rows:42px 1fr 46px 4px; }
+  .topbar { padding:0 28px; }
+  .brand-logo { width:72px; }
+  .cover-left { padding:34px 36px; }
+  .cover-team { margin-top:24px; }
+  .cover-person { min-height:26px; padding:0 10px; }
+  .cover-right { padding:26px 28px; }
+  .net-area svg { max-width:280px; }
+  .cover-chip { padding:10px 12px; }
+  .four-grid, .tradeoff-grid, .ex-grid, .tl-grid, .closing-grid { margin-top:20px !important; }
+  .block-card, .tc, .ex-card, .tl-col, .cl-col { padding:18px 16px; }
+  .block-icon { font-size:30px; margin-bottom:16px; }
+  .diagram-box { min-height:180px; }
+  .dev-accordion { margin-top:20px; }
+  .dev-tab { padding:13px 16px; }
+  .dev-content { padding:14px; }
+  .slide-footer { padding-top:12px; }
+  :root { --fs-lg: clamp(2rem, 4.2vw, 3.6rem); --fs-sm:12px; }
+}
+
+@media (min-width: 1440px) {
+  .slide { padding-left:clamp(52px, 5vw, 84px); padding-right:clamp(52px, 5vw, 84px); }
+  .net-area svg { max-width:420px; }
+  .cover-left { padding-left:clamp(64px, 6vw, 110px); }
+}
+
 @media (max-width: 860px) {
-  .agenda-layout { grid-template-columns:1fr; }
-  .agenda-info { display:none; }
-  .agenda-item:hover { margin:0; padding-left:0; padding-right:0; }
+  .dev-accordion { grid-template-columns:1fr; overflow:visible; }
+  .dev-panel { display:flex; flex-direction:column; }
+  .dev-content { grid-column:auto; }
+  .dev-content { overflow:visible; }
   body { overflow:auto; }
   .shell { height:auto; min-height:100vh; grid-template-rows:48px 1fr 52px 4px; }
-  .slides-area { min-height:580px; }
+  .slides-area { min-height:clamp(480px, 80vh, 720px); }
   .slide { position:relative; }
   .slide:not(.active) { display:none !important; }
   .slide.active { animation:none !important; opacity:1; }
   .topbar, .controls { padding:0 20px; }
-  .slide { padding:40px 20px 28px; }
+  .slide { padding:36px 20px 24px; }
   .cover-left { padding:36px 20px; }
 
   .two-col    { grid-template-columns:1fr; }
@@ -971,12 +1090,30 @@ body {
   .diagram-box { min-height:180px; }
   .dots { display:none; }
   :root { --fs-lg:clamp(1.8rem,6vw,2.8rem); }
+  .slide-footer { flex-wrap:wrap; gap:4px; }
+}
+
+@media (max-width: 640px) {
+  /* hide brand subtitle, keep logo */
+  .brand .brand-sep,
+  .brand > span:last-child { display:none; }
+  .brand-logo { width:72px; }
+  .cover-meta  { grid-template-columns:1fr 1fr; }
+  .ctrl-btn    { padding:0 14px; font-size:12px; }
 }
 
 @media (max-width: 560px) {
-  .four-grid { grid-template-columns:1fr; }
-  .cover-meta { grid-template-columns:1fr; }
+  .four-grid   { grid-template-columns:1fr; }
+  .cover-meta  { grid-template-columns:1fr; }
+  .block-card, .tc, .ex-card, .tl-col { padding:20px 16px; }
   :root { --fs-lg:clamp(1.5rem,7vw,2.4rem); }
+}
+
+@media (max-width: 400px) {
+  :root { --fs-md:16px; --fs-sm:12px; }
+  .slide { padding:28px 14px 20px; }
+  .topbar, .controls { padding:0 14px; }
+  .eyebrow { margin-bottom:12px; }
 }
 
 @media (prefers-reduced-motion:reduce) {
@@ -990,9 +1127,7 @@ body {
 <!-- TOPBAR -->
 <header class="topbar">
   <div class="brand">
-    <svg xmlns="http://www.w3.org/2000/svg" width="42" height="17" viewBox="0 0 424.66 158.45" aria-label="IBM">
-      <path fill="#0f62fe" d="M407.85,149.79c0-4.91,3.74-8.65,8.4-8.65s8.4,3.74,8.4,8.65-3.74,8.65-8.4,8.65-8.4-3.74-8.4-8.65ZM422.68,150.34v-1.09c0-3.53-2.77-6.3-6.43-6.3s-6.43,2.77-6.43,6.3v1.09c0,3.53,2.77,6.3,6.43,6.3s6.43-2.77,6.43-6.3ZM414.99,154.25h-2.14v-8.78h3.99c1.97,0,2.98,1.18,2.98,2.77,0,1.39-.63,2.27-1.6,2.65l1.97,3.36h-2.35l-1.64-3.02h-1.22v3.02ZM416.59,149.63c.67,0,1.05-.29,1.05-.92v-.63c0-.63-.38-.92-1.05-.92h-1.6v2.48h1.6ZM0,147h77v11H0v-11ZM0,137h77v-11H0v11ZM22,116h33v-11H22v11ZM22,95h33v-11H22v11ZM22,74h33v-11H22v11ZM55,42H22v11h33v-11ZM0,32h77v-11H0v11ZM0,11h77V0H0v11ZM88,137h117.37c1.97-3.4,3.47-7.09,4.43-11h-121.79v11ZM196.18,84h-86.18v11h95.36c-2.42-4.17-5.52-7.89-9.18-11ZM110,63v11h86.18c3.65-3.11,6.76-6.83,9.18-11h-95.36ZM205.37,21h-117.37v11h121.79c-.96-3.91-2.46-7.6-4.43-11ZM169,0h-81v11h109.33c-7.47-6.83-17.41-11-28.33-11ZM110,53h33v-11h-33v11ZM174,53h35.53c.95-3.51,1.47-7.19,1.47-11h-37v11ZM110,116h33v-11h-33v11ZM174,105v11h37c0-3.81-.52-7.49-1.47-11h-35.53ZM88,158h81c11,0,20.86-4.17,28.33-11h-109.33v11ZM308,158l3.82-11h-7.65l3.82,11ZM300.67,137h14.67l3.86-11h-22.39l3.86,11ZM293.29,116h29.41l3.86-11h-37.14l3.86,11ZM285.92,95h44.16l3.86-11h-51.88l3.86,11ZM242,53h59.43l-3.83-11h-55.61v11ZM321.87,32h74.13v-11h-70.3s-3.83,11-3.83,11ZM333,0l-3.82,11h66.82V0h-63ZM220,158h55v-11h-55v11ZM220,137h55v-11h-55v11ZM242,116h33v-11h-33v11ZM242,95h33v-11h-33v11ZM374,42h-55.6l-3.83,11h59.43v-11ZM341,74h33v-11h-62.91l-3.09,8.89-3.09-8.89h-62.91v11h33v-10.11l3.55,10.11h58.9l3.55-10.11v10.11ZM374,84h-33v11h33v-11ZM341,116h33v-11h-33v11ZM341,137h55v-11h-55v11ZM341,158h55v-11h-55v11ZM294.13,32l-3.83-11h-70.3v11h74.13ZM286.83,11l-3.83-11h-63v11h66.83Z"/>
-    </svg>
+    <img class="brand-logo" src="./assets/logo/marca ceub versao positiva magenta.png" alt="CEUB"/>
     <span class="brand-sep"></span>
     <span>Seminário · Arquitetura e Sistemas Distribuídos</span>
   </div>
@@ -1005,150 +1140,51 @@ body {
   <!-- 1 · CAPA -->
   <section class="slide active cover-slide" data-title="Título">
     <div class="cover-left">
-      <p class="eyebrow">Arquitetura e Sistemas Distribuídos</p>
+      <p class="eyebrow">Sistemas Distribuídos</p>
       <h1 class="t-heading">Arquiteturas<br/><strong>Híbridas</strong></h1>
-      <p class="t-body">Combinações de cliente-servidor,<br/>P2P, edge e cloud</p>
-      <div class="cover-meta">
-        <div class="cover-meta-cell">
-          <span class="t-label">Apresentadora #1</span>
-          <span class="val">Maria Eduarda Eguchi</span>
-        </div>
-        <div class="cover-meta-cell">
-          <span class="t-label">Apresentador #2</span>
-          <span class="val">Matheus Musashi</span>
-        </div>
-        <div class="cover-meta-cell">
-          <span class="t-label">Apresentador #3</span>
-          <span class="val">Kaike Vitorino</span>
-        </div>
-        <div class="cover-meta-cell">
-          <span class="t-label">Apresentadora #4</span>
-          <span class="val">Livia Lemos</span>
-        </div>
+      <div class="cover-note">Cliente-servidor · P2P · Edge · Cloud</div>
+      <div class="cover-team">
+        <span class="cover-person">Maria Eduarda</span>
+        <span class="cover-person">Matheus Musashi</span>
+        <span class="cover-person">Kaike Vitorino</span>
+        <span class="cover-person">Livia Lemos</span>
       </div>
     </div>
     <div class="cover-right">
       <div class="ibm-bars"></div>
       <div class="ibm-dots"></div>
+      <div class="cover-line one"></div>
+      <div class="cover-line two"></div>
       <div class="cover-big-num">H</div>
       <div class="cover-right-inner">
         <div class="net-area">
           <svg viewBox="0 0 340 260" aria-hidden="true">
             <!-- connections - dashed animated -->
-            <line class="dash-flow" x1="60" y1="65" x2="170" y2="130" stroke="rgba(120,169,255,0.4)" stroke-width="1.5" fill="none"/>
-            <line class="dash-flow" x1="280" y1="65" x2="170" y2="130" stroke="rgba(51,177,255,0.4)" stroke-width="1.5" fill="none" style="animation-delay:-3s"/>
-            <line class="dash-flow" x1="70" y1="205" x2="170" y2="130" stroke="rgba(190,149,255,0.4)" stroke-width="1.5" fill="none" style="animation-delay:-5s"/>
-            <line class="dash-flow" x1="275" y1="200" x2="170" y2="130" stroke="rgba(8,189,186,0.4)" stroke-width="1.5" fill="none" style="animation-delay:-1.5s"/>
-            <line class="dash-flow" x1="60" y1="65" x2="70" y2="205" stroke="rgba(120,169,255,0.2)" stroke-width="1" fill="none" style="animation-delay:-4s"/>
-            <line class="dash-flow" x1="280" y1="65" x2="275" y2="200" stroke="rgba(51,177,255,0.2)" stroke-width="1" fill="none" style="animation-delay:-2s"/>
+            <line class="dash-flow" x1="60" y1="65" x2="170" y2="130" stroke="rgba(236,0,137,0.45)" stroke-width="1.5" fill="none"/>
+            <line class="dash-flow" x1="280" y1="65" x2="170" y2="130" stroke="rgba(253,225,0,0.42)" stroke-width="1.5" fill="none" style="animation-delay:-3s"/>
+            <line class="dash-flow" x1="70" y1="205" x2="170" y2="130" stroke="rgba(191,0,135,0.42)" stroke-width="1.5" fill="none" style="animation-delay:-5s"/>
+            <line class="dash-flow" x1="275" y1="200" x2="170" y2="130" stroke="rgba(102,44,146,0.42)" stroke-width="1.5" fill="none" style="animation-delay:-1.5s"/>
+            <line class="dash-flow" x1="60" y1="65" x2="70" y2="205" stroke="rgba(236,0,137,0.22)" stroke-width="1" fill="none" style="animation-delay:-4s"/>
+            <line class="dash-flow" x1="280" y1="65" x2="275" y2="200" stroke="rgba(253,225,0,0.24)" stroke-width="1" fill="none" style="animation-delay:-2s"/>
             <!-- hub -->
-            <rect x="143" y="108" width="54" height="44" fill="rgba(15,98,254,0.15)" stroke="#4589ff" stroke-width="1.5"/>
-            <text x="170" y="134" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="10" font-weight="600" fill="#78a9ff" letter-spacing="0.5">HUB</text>
+            <rect x="143" y="108" width="54" height="44" fill="rgba(236,0,137,0.16)" stroke="#ec0089" stroke-width="1.5"/>
+            <text x="170" y="134" text-anchor="middle" font-family="dT Jakob, sans-serif" font-size="10" font-weight="600" fill="#ffb3de" letter-spacing="0.5">HUB</text>
             <!-- nodes -->
-            <circle cx="60" cy="65" r="24" fill="rgba(0,29,108,0.9)" stroke="#4589ff" stroke-width="2" class="pulse-dot"/>
-            <text x="60" y="69" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="9" font-weight="600" fill="#78a9ff">CLIENTE</text>
-            <circle cx="280" cy="65" r="24" fill="rgba(0,29,108,0.9)" stroke="#33b1ff" stroke-width="2" class="pulse-dot"/>
-            <text x="280" y="69" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="9" font-weight="600" fill="#33b1ff">CLOUD</text>
-            <circle cx="70" cy="205" r="24" fill="rgba(0,29,108,0.9)" stroke="#08bdba" stroke-width="2" class="pulse-dot"/>
-            <text x="70" y="209" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="9" font-weight="600" fill="#08bdba">EDGE</text>
-            <circle cx="275" cy="200" r="24" fill="rgba(0,29,108,0.9)" stroke="#be95ff" stroke-width="2" class="pulse-dot"/>
-            <text x="275" y="204" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="9" font-weight="600" fill="#be95ff">P2P</text>
+            <circle cx="60" cy="65" r="24" fill="rgba(67,5,78,0.92)" stroke="#ec0089" stroke-width="2"/>
+            <text x="60" y="69" text-anchor="middle" font-family="dT Jakob, sans-serif" font-size="9" font-weight="600" fill="#ffb3de">CLIENTE</text>
+            <circle cx="280" cy="65" r="24" fill="rgba(67,5,78,0.92)" stroke="#fde100" stroke-width="2"/>
+            <text x="280" y="69" text-anchor="middle" font-family="dT Jakob, sans-serif" font-size="9" font-weight="600" fill="#fde100">CLOUD</text>
+            <circle cx="70" cy="205" r="24" fill="rgba(67,5,78,0.92)" stroke="#bf0087" stroke-width="2"/>
+            <text x="70" y="209" text-anchor="middle" font-family="dT Jakob, sans-serif" font-size="9" font-weight="600" fill="#bf0087">EDGE</text>
+            <circle cx="275" cy="200" r="24" fill="rgba(67,5,78,0.92)" stroke="#662c92" stroke-width="2"/>
+            <text x="275" y="204" text-anchor="middle" font-family="dT Jakob, sans-serif" font-size="9" font-weight="600" fill="#662c92">P2P</text>
           </svg>
         </div>
         <div class="cover-chips">
-          <div class="cover-chip"><span class="t-label">camadas</span><span class="val">4 modelos</span></div>
-          <div class="cover-chip"><span class="t-label">abordagem</span><span class="val">Híbrida</span></div>
+          <div class="cover-chip"><span class="t-label">camadas</span><span class="val">4</span></div>
+          <div class="cover-chip"><span class="t-label">slides</span><span class="val">7</span></div>
         </div>
       </div>
-    </div>
-  </section>
-
-
-  <!-- 2 · AGENDA -->
-  <section class="slide" data-title="Agenda">
-    <div class="animate-children">
-      <p class="eyebrow">Agenda</p>
-      <h2 class="t-heading">O que vamos <strong>percorrer</strong></h2>
-    </div>
-    <div class="agenda-layout" style="margin-top:28px;">
-      <div class="agenda-list animate-children">
-        <div class="agenda-item">
-          <span class="agenda-num">01</span>
-          <div class="agenda-body">
-            <span class="agenda-title">Introdução</span>
-            <span class="agenda-sub">Por que arquiteturas híbridas existem?</span>
-          </div>
-          <span class="agenda-tag">Contexto</span>
-        </div>
-        <div class="agenda-item">
-          <span class="agenda-num">02</span>
-          <div class="agenda-body">
-            <span class="agenda-title">Quatro blocos</span>
-            <span class="agenda-sub">Cliente-servidor, P2P, Edge e Cloud</span>
-          </div>
-          <span class="agenda-tag">Conceitos</span>
-        </div>
-        <div class="agenda-item">
-          <span class="agenda-num">03</span>
-          <div class="agenda-body">
-            <span class="agenda-title">Combinações híbridas</span>
-            <span class="agenda-sub">Como os modelos se integram na prática</span>
-          </div>
-          <span class="agenda-tag">Desenvolvimento</span>
-        </div>
-        <div class="agenda-item">
-          <span class="agenda-num">04</span>
-          <div class="agenda-body">
-            <span class="agenda-title">Trade-offs</span>
-            <span class="agenda-sub">Benefícios, custos e como decidir</span>
-          </div>
-          <span class="agenda-tag">Análise</span>
-        </div>
-        <div class="agenda-item">
-          <span class="agenda-num">05</span>
-          <div class="agenda-body">
-            <span class="agenda-title">Exemplos reais</span>
-            <span class="agenda-sub">Videoconferência e IoT industrial</span>
-          </div>
-          <span class="agenda-tag">Exemplos</span>
-        </div>
-        <div class="agenda-item">
-          <span class="agenda-num">06</span>
-          <div class="agenda-body">
-            <span class="agenda-title">Conclusão</span>
-            <span class="agenda-sub">Síntese e considerações finais</span>
-          </div>
-          <span class="agenda-tag">Fechamento</span>
-        </div>
-      </div>
-      <div class="agenda-info">
-    </div>
-    <div class="slide-footer" style="margin-top:auto;">
-      <span>Agenda</span><span>02 / 11</span>
-    </div>
-  </section>
-
-  <!-- 3 · INTRODUÇÃO -->
-  <section class="slide" data-title="Introdução">
-    <div class="animate-children">
-      <p class="eyebrow">Introdução</p>
-      <h2 class="t-heading">Por que arquiteturas híbridas <strong>existem</strong>?</h2>
-    </div>
-    <div class="intro-layout" style="margin-top:28px;">
-      <div class="animate-children">
-        <p class="t-body" style="font-size:var(--fs-md);color:var(--text);font-weight:400;margin-bottom:16px;">Sistemas modernos raramente dependem de um único modelo. Eles combinam abordagens para ganhar desempenho, escala, disponibilidade e melhor experiência do usuário.</p>
-        <p class="t-body">Uma arquitetura híbrida distribui responsabilidades entre diferentes camadas: parte roda no dispositivo do usuário, parte em servidores centrais, parte perto do usuário e, em alguns casos, diretamente entre usuários.</p>
-      </div>
-      <div class="quote-panel">
-        <div class="ibm-bars"></div>
-        <span class="q-label">Ideia central</span>
-        <blockquote>"Não é qual arquitetura é melhor, mas qual parte do sistema deve viver em qual lugar."</blockquote>
-        <span class="quote-mark">"</span>
-      </div>
-    </div>
-    <div class="slide-footer animate-children" style="margin-top:auto;">
-      <span>Computação distribuída</span>
-      <span>03 / 11</span>
     </div>
   </section>
 
@@ -1163,148 +1199,147 @@ body {
         <span class="block-num">01 / 04</span>
         <div class="block-icon">⇌</div>
         <h3>Cliente-servidor</h3>
-        <p>Clientes pedem recursos; servidores processam, armazenam e respondem. Base da Web e das APIs REST.</p>
+        <p>Cliente solicita. Servidor processa e responde.</p>
       </article>
       <article class="block-card bc-c">
         <span class="block-num">02 / 04</span>
         <div class="block-icon">⬡</div>
         <h3>P2P</h3>
-        <p>Dispositivos se comunicam diretamente, compartilhando carga sem depender de um servidor central.</p>
+        <p>Dispositivos trocam dados diretamente.</p>
       </article>
       <article class="block-card bc-t">
         <span class="block-num">03 / 04</span>
         <div class="block-icon">◈</div>
         <h3>Edge</h3>
-        <p>Processamento no ponto mais próximo do usuário ou sensor — CDNs, gateways IoT e redes móveis.</p>
+        <p>Processamento perto do usuário ou sensor.</p>
       </article>
       <article class="block-card bc-p">
         <span class="block-num">04 / 04</span>
         <div class="block-icon">☁</div>
         <h3>Cloud</h3>
-        <p>Infraestrutura elástica para escala global, armazenamento persistente e serviços gerenciados.</p>
+        <p>Escala, armazenamento e serviços sob demanda.</p>
       </article>
     </div>
     <div class="slide-footer animate-children" style="margin-top:auto;">
-      <span>Conceitos-base</span><span>04 / 11</span>
+      <span>Conceitos-base</span><span>02 / 07</span>
     </div>
   </section>
 
-  <!-- 4 · CLIENTE-SERVIDOR + CLOUD -->
-  <section class="slide" data-title="Cliente-servidor + cloud">
+  <!-- 4 · DESENVOLVIMENTO -->
+  <section class="slide" data-title="Desenvolvimento">
     <div class="animate-children">
-      <p class="eyebrow">Desenvolvimento · 1 de 3</p>
-      <h2 class="t-heading">Cliente-servidor <strong>+ cloud</strong></h2>
+      <p class="eyebrow">Desenvolvimento</p>
+      <h2 class="t-heading">Três combinações <strong>híbridas</strong></h2>
     </div>
-    <div class="flow-row" style="margin-top:28px;">
-      <div class="flow-node">
-        <span class="t-label">apresentação</span>
-        <span class="t-body" style="color:var(--text);font-weight:600;font-size:var(--fs-sm);">Aplicativo / Navegador</span>
-      </div>
-      <div class="flow-arrow">
-        <svg viewBox="0 0 18 18" fill="none"><path d="M2 9H16M11 4L16 9L11 14" stroke="#6f6f6f" stroke-width="1.5" stroke-linecap="square"/></svg>
-      </div>
-      <div class="flow-node">
-        <span class="t-label">lógica de negócio</span>
-        <span class="t-body" style="color:var(--text);font-weight:600;font-size:var(--fs-sm);">API / Backend</span>
-      </div>
-      <div class="flow-arrow">
-        <svg viewBox="0 0 18 18" fill="none"><path d="M2 9H16M11 4L16 9L11 14" stroke="#6f6f6f" stroke-width="1.5" stroke-linecap="square"/></svg>
-      </div>
-      <div class="flow-node">
-        <span class="t-label">persistência &amp; serviços</span>
-        <span class="t-body" style="color:var(--text);font-weight:600;font-size:var(--fs-sm);">Banco · Filas · IA · Storage</span>
-      </div>
-    </div>
-    <div class="info-box" style="margin-top:0;">
-      <h3>Quando faz sentido?</h3>
-      <p>Base muito comum para sistemas web e mobile. A cloud facilita escalar, centralizar regras de negócio, integrar serviços e armazenar dados com alta disponibilidade.</p>
-      <div class="chips">
-        <span class="tag">controle central</span>
-        <span class="tag">escala</span>
-        <span class="tag">segurança</span>
-        <span class="tag">manutenção simples</span>
-      </div>
+    <div class="dev-accordion" data-dev-accordion>
+      <article class="dev-panel is-open">
+        <button class="dev-tab" type="button" aria-expanded="true">
+          <span class="dev-index">01</span>
+          <span class="dev-tab-title">Cliente-servidor + cloud</span>
+        </button>
+        <div class="dev-content">
+          <div class="flow-row">
+            <div class="flow-node">
+              <span class="t-label">apresentação</span>
+              <span class="t-body">Aplicativo / Navegador</span>
+            </div>
+            <div class="flow-arrow">
+              <svg viewBox="0 0 18 18" fill="none"><path d="M2 9H16M11 4L16 9L11 14" stroke="#6f6f6f" stroke-width="1.5" stroke-linecap="square"/></svg>
+            </div>
+            <div class="flow-node">
+              <span class="t-label">lógica de negócio</span>
+              <span class="t-body">API / Backend</span>
+            </div>
+            <div class="flow-arrow">
+              <svg viewBox="0 0 18 18" fill="none"><path d="M2 9H16M11 4L16 9L11 14" stroke="#6f6f6f" stroke-width="1.5" stroke-linecap="square"/></svg>
+            </div>
+            <div class="flow-node">
+              <span class="t-label">persistência &amp; serviços</span>
+              <span class="t-body">Banco · Filas · IA · Storage</span>
+            </div>
+          </div>
+          <div class="info-box">
+            <h3>Quando faz sentido?</h3>
+            <p>Boa para controle central, escala e manutenção simples.</p>
+            <div class="chips">
+              <span class="tag">controle central</span>
+              <span class="tag">escala</span>
+              <span class="tag">segurança</span>
+              <span class="tag">manutenção simples</span>
+            </div>
+          </div>
+        </div>
+      </article>
+      <article class="dev-panel">
+        <button class="dev-tab" type="button" aria-expanded="false">
+          <span class="dev-index">02</span>
+          <span class="dev-tab-title">P2P + servidor central</span>
+        </button>
+        <div class="dev-content">
+          <div class="two-col">
+            <div class="diagram-box">
+              <svg viewBox="0 0 280 230" aria-hidden="true">
+                <line class="dash-flow" x1="55" y1="55" x2="140" y2="115" stroke="var(--gray-30)" stroke-width="1.5" fill="none"/>
+                <line class="dash-flow" x1="225" y1="55" x2="140" y2="115" stroke="var(--gray-30)" stroke-width="1.5" fill="none" style="animation-delay:-3s"/>
+                <line class="dash-flow" x1="45" y1="185" x2="140" y2="115" stroke="var(--gray-30)" stroke-width="1.5" fill="none" style="animation-delay:-1.5s"/>
+                <line class="dash-flow" x1="235" y1="185" x2="140" y2="115" stroke="var(--gray-30)" stroke-width="1.5" fill="none" style="animation-delay:-4.5s"/>
+                <line class="dash-flow" x1="55" y1="55" x2="45" y2="185" stroke="var(--gray-20)" stroke-width="1" fill="none" style="animation-delay:-2s"/>
+                <line class="dash-flow" x1="225" y1="55" x2="235" y2="185" stroke="var(--gray-20)" stroke-width="1" fill="none" style="animation-delay:-5s"/>
+                <circle cx="55" cy="55" r="22" fill="var(--layer-01)" stroke="var(--ibm)" stroke-width="2"/>
+                <text x="55" y="59" text-anchor="middle" font-family="dT Jakob, sans-serif" font-size="11" font-weight="700" fill="var(--ibm)">A</text>
+                <circle cx="225" cy="55" r="22" fill="var(--layer-01)" stroke="var(--ibm)" stroke-width="2"/>
+                <text x="225" y="59" text-anchor="middle" font-family="dT Jakob, sans-serif" font-size="11" font-weight="700" fill="var(--ibm)">B</text>
+                <circle cx="45" cy="185" r="22" fill="var(--layer-01)" stroke="var(--ibm)" stroke-width="2"/>
+                <text x="45" y="189" text-anchor="middle" font-family="dT Jakob, sans-serif" font-size="11" font-weight="700" fill="var(--ibm)">C</text>
+                <circle cx="235" cy="185" r="22" fill="var(--layer-01)" stroke="var(--ibm)" stroke-width="2"/>
+                <text x="235" y="189" text-anchor="middle" font-family="dT Jakob, sans-serif" font-size="11" font-weight="700" fill="var(--ibm)">D</text>
+                <rect x="107" y="97" width="66" height="36" fill="var(--blue-10)" stroke="var(--ibm)" stroke-width="2"/>
+                <text x="140" y="119" text-anchor="middle" font-family="dT Jakob, sans-serif" font-size="9" font-weight="600" fill="var(--ibm)" letter-spacing="0.5">SERVIDOR</text>
+              </svg>
+            </div>
+            <div class="col-text">
+              <p class="t-body" style="font-size:var(--fs-md);color:var(--text);font-weight:400;margin-bottom:16px;">Servidor coordena. Pares trocam dados.</p>
+              <p class="t-body">Menos carga central, mais cuidado com segurança e conexão.</p>
+            </div>
+          </div>
+        </div>
+      </article>
+      <article class="dev-panel">
+        <button class="dev-tab" type="button" aria-expanded="false">
+          <span class="dev-index">03</span>
+          <span class="dev-tab-title">Edge + cloud</span>
+        </button>
+        <div class="dev-content">
+          <div class="two-col">
+            <div class="diagram-box">
+              <svg viewBox="0 0 300 220" aria-hidden="true">
+                <line class="dash-flow" x1="68" y1="175" x2="150" y2="108" stroke="var(--teal-40)" stroke-width="1.5" fill="none"/>
+                <line class="dash-flow" x1="150" y1="108" x2="255" y2="58" stroke="var(--ibm)" stroke-width="1.5" fill="none" style="animation-delay:-2s"/>
+                <rect x="22" y="153" width="92" height="44" fill="var(--layer-01)" stroke="var(--teal-40)" stroke-width="2"/>
+                <text x="68" y="171" text-anchor="middle" font-family="dT Jakob, sans-serif" font-size="9" font-weight="700" fill="var(--teal-50)" letter-spacing="0.5">SENSOR</text>
+                <text x="68" y="186" text-anchor="middle" font-family="dT Jakob, sans-serif" font-size="8" fill="var(--text-3)">IoT device</text>
+                <rect x="104" y="86" width="92" height="44" fill="var(--blue-10)" stroke="var(--ibm)" stroke-width="2"/>
+                <text x="150" y="104" text-anchor="middle" font-family="dT Jakob, sans-serif" font-size="9" font-weight="700" fill="var(--ibm)" letter-spacing="0.5">EDGE</text>
+                <text x="150" y="119" text-anchor="middle" font-family="dT Jakob, sans-serif" font-size="8" fill="var(--text-3)">gateway · filtro</text>
+                <ellipse cx="255" cy="62" rx="40" ry="26" fill="var(--layer-01)" stroke="var(--purple-50)" stroke-width="2"/>
+                <text x="255" y="58" text-anchor="middle" font-family="dT Jakob, sans-serif" font-size="9" font-weight="700" fill="var(--purple-60)" letter-spacing="0.5">CLOUD</text>
+                <text x="255" y="73" text-anchor="middle" font-family="dT Jakob, sans-serif" font-size="8" fill="var(--text-3)">histórico · IA</text>
+              </svg>
+            </div>
+            <div class="col-text">
+              <p class="t-body" style="font-size:var(--fs-md);color:var(--text);font-weight:400;margin-bottom:20px;">Edge decide rápido. Cloud guarda e coordena.</p>
+              <ul class="clean-list">
+                <li>Menor latência.</li>
+                <li>Menos tráfego.</li>
+                <li>Mais privacidade local.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </article>
     </div>
     <div class="slide-footer animate-children" style="margin-top:auto;">
-      <span>Desenvolvimento · 1 de 3</span><span>05 / 11</span>
-    </div>
-  </section>
-
-  <!-- 5 · P2P + SERVIDOR -->
-  <section class="slide" data-title="P2P + servidor central">
-    <div class="animate-children">
-      <p class="eyebrow">Desenvolvimento · 2 de 3</p>
-      <h2 class="t-heading">P2P <strong>+ servidor</strong> central</h2>
-    </div>
-    <div class="two-col" style="margin-top:28px;">
-      <div class="diagram-box">
-        <svg viewBox="0 0 280 230" aria-hidden="true">
-          <line class="dash-flow" x1="55" y1="55" x2="140" y2="115" stroke="var(--gray-30)" stroke-width="1.5" fill="none"/>
-          <line class="dash-flow" x1="225" y1="55" x2="140" y2="115" stroke="var(--gray-30)" stroke-width="1.5" fill="none" style="animation-delay:-3s"/>
-          <line class="dash-flow" x1="45" y1="185" x2="140" y2="115" stroke="var(--gray-30)" stroke-width="1.5" fill="none" style="animation-delay:-1.5s"/>
-          <line class="dash-flow" x1="235" y1="185" x2="140" y2="115" stroke="var(--gray-30)" stroke-width="1.5" fill="none" style="animation-delay:-4.5s"/>
-          <line class="dash-flow" x1="55" y1="55" x2="45" y2="185" stroke="var(--gray-20)" stroke-width="1" fill="none" style="animation-delay:-2s"/>
-          <line class="dash-flow" x1="225" y1="55" x2="235" y2="185" stroke="var(--gray-20)" stroke-width="1" fill="none" style="animation-delay:-5s"/>
-          <!-- peers -->
-          <circle cx="55" cy="55" r="22" fill="var(--layer-01)" stroke="var(--ibm)" stroke-width="2"/>
-          <text x="55" y="59" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="11" font-weight="700" fill="var(--ibm)">A</text>
-          <circle cx="225" cy="55" r="22" fill="var(--layer-01)" stroke="var(--ibm)" stroke-width="2"/>
-          <text x="225" y="59" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="11" font-weight="700" fill="var(--ibm)">B</text>
-          <circle cx="45" cy="185" r="22" fill="var(--layer-01)" stroke="var(--ibm)" stroke-width="2"/>
-          <text x="45" y="189" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="11" font-weight="700" fill="var(--ibm)">C</text>
-          <circle cx="235" cy="185" r="22" fill="var(--layer-01)" stroke="var(--ibm)" stroke-width="2"/>
-          <text x="235" y="189" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="11" font-weight="700" fill="var(--ibm)">D</text>
-          <!-- server -->
-          <rect x="107" y="97" width="66" height="36" fill="var(--blue-10)" stroke="var(--ibm)" stroke-width="2"/>
-          <text x="140" y="119" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="9" font-weight="600" fill="var(--ibm)" letter-spacing="0.5">SERVIDOR</text>
-        </svg>
-      </div>
-      <div class="col-text">
-        <p class="t-body" style="font-size:var(--fs-md);color:var(--text);font-weight:400;margin-bottom:16px;">O servidor cuida de login, descoberta de pares, sinalização e autorização. A troca pesada de dados acontece diretamente entre os dispositivos.</p>
-        <p class="t-body">Isso reduz carga no servidor e melhora a comunicação em tempo real, mas traz desafios de NAT, segurança, confiabilidade e moderação.</p>
-      </div>
-    </div>
-    <div class="slide-footer animate-children" style="margin-top:auto;">
-      <span>Desenvolvimento · 2 de 3</span><span>06 / 11</span>
-    </div>
-  </section>
-
-  <!-- 6 · EDGE + CLOUD -->
-  <section class="slide" data-title="Edge + cloud">
-    <div class="animate-children">
-      <p class="eyebrow">Desenvolvimento · 3 de 3</p>
-      <h2 class="t-heading">Edge <strong>+ cloud</strong></h2>
-    </div>
-    <div class="two-col" style="margin-top:28px;">
-      <div class="diagram-box">
-        <svg viewBox="0 0 300 220" aria-hidden="true">
-          <line class="dash-flow" x1="68" y1="175" x2="150" y2="108" stroke="var(--teal-40)" stroke-width="1.5" fill="none"/>
-          <line class="dash-flow" x1="150" y1="108" x2="255" y2="58" stroke="var(--ibm)" stroke-width="1.5" fill="none" style="animation-delay:-2s"/>
-          <!-- sensor -->
-          <rect x="22" y="153" width="92" height="44" fill="var(--layer-01)" stroke="var(--teal-40)" stroke-width="2"/>
-          <text x="68" y="171" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="9" font-weight="700" fill="var(--teal-50)" letter-spacing="0.5">SENSOR</text>
-          <text x="68" y="186" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="8" fill="var(--text-3)">IoT device</text>
-          <!-- edge -->
-          <rect x="104" y="86" width="92" height="44" fill="var(--blue-10)" stroke="var(--ibm)" stroke-width="2"/>
-          <text x="150" y="104" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="9" font-weight="700" fill="var(--ibm)" letter-spacing="0.5">EDGE</text>
-          <text x="150" y="119" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="8" fill="var(--text-3)">gateway · filtro</text>
-          <!-- cloud -->
-          <ellipse cx="255" cy="62" rx="40" ry="26" fill="var(--layer-01)" stroke="var(--purple-50)" stroke-width="2"/>
-          <text x="255" y="58" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="9" font-weight="700" fill="var(--purple-60)" letter-spacing="0.5">CLOUD</text>
-          <text x="255" y="73" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="8" fill="var(--text-3)">histórico · IA</text>
-        </svg>
-      </div>
-      <div class="col-text">
-        <p class="t-body" style="font-size:var(--fs-md);color:var(--text);font-weight:400;margin-bottom:20px;">A edge processa o que precisa ser rápido ou local. A cloud recebe dados agregados, treina modelos, guarda histórico e coordena o sistema.</p>
-        <ul class="clean-list">
-          <li>Menor latência para decisões imediatas.</li>
-          <li>Menos tráfego enviado para a nuvem.</li>
-          <li>Mais privacidade quando dados sensíveis ficam locais.</li>
-        </ul>
-      </div>
-    </div>
-    <div class="slide-footer animate-children" style="margin-top:auto;">
-      <span>Desenvolvimento · 3 de 3</span><span>07 / 11</span>
+      <span>Desenvolvimento · 3 combinações</span><span>03 / 07</span>
     </div>
   </section>
 
@@ -1317,22 +1352,22 @@ body {
     <div class="tradeoff-grid" style="margin-top:28px;">
       <div class="tc tc-s">
         <span class="tc-lbl">Benefícios</span>
-        <p>Desempenho e menor latência para operações críticas. Resiliência: falhas em uma camada não derrubam o sistema. Uso eficiente de recursos e melhor experiência do usuário.</p>
+        <p>Menor latência, mais resiliência e melhor uso de recursos.</p>
         <span class="tc-wm">+</span>
       </div>
       <div class="tc tc-w">
         <span class="tc-lbl">Custos</span>
-        <p>Maior complexidade de desenvolvimento e operação. Sincronização de estado entre camadas é difícil. Observabilidade distribuída exige ferramentas dedicadas e surface de segurança maior.</p>
+        <p>Mais camadas, mais sincronização e mais pontos de segurança.</p>
         <span class="tc-wm">−</span>
       </div>
       <div class="tc tc-i">
         <span class="tc-lbl">Como decidir?</span>
-        <p>A arquitetura deve nascer dos requisitos: latência tolerada, custo de infraestrutura, privacidade dos dados, volume de escala, nível de conectividade e facilidade de manutenção.</p>
+        <p>Decida por latência, custo, privacidade, escala e manutenção.</p>
         <span class="tc-wm">?</span>
       </div>
     </div>
     <div class="slide-footer animate-children" style="margin-top:auto;">
-      <span>Análise de trade-offs</span><span>08 / 11</span>
+      <span>Análise de trade-offs</span><span>04 / 07</span>
     </div>
   </section>
 
@@ -1346,27 +1381,26 @@ body {
       <div class="ex-card">
         <span class="ex-tag">Cloud</span>
         <span class="ex-title">Persistência global</span>
-        <span class="ex-desc">Login, agenda, gravações, histórico e permissões.</span>
+        <span class="ex-desc">Login, gravações e permissões.</span>
       </div>
       <div class="ex-card">
         <span class="ex-tag">Servidor</span>
         <span class="ex-title">Coordenação de sessão</span>
-        <span class="ex-desc">Sinalização, salas, presença e controle de sessão.</span>
+        <span class="ex-desc">Salas, presença e controle.</span>
       </div>
       <div class="ex-card">
         <span class="ex-tag">P2P / Media server</span>
         <span class="ex-title">Mídia em tempo real</span>
-        <span class="ex-desc">Áudio, vídeo e compartilhamento de tela em baixa latência.</span>
+        <span class="ex-desc">Áudio e vídeo em baixa latência.</span>
       </div>
       <div class="ex-card">
         <span class="ex-tag">Edge / CDN</span>
         <span class="ex-title">Proximidade ao usuário</span>
-        <span class="ex-desc">Entrega de conteúdo e pontos próximos ao usuário final.</span>
+        <span class="ex-desc">Entrega próxima ao usuário.</span>
       </div>
     </div>
-    <p class="t-body" style="font-size:var(--fs-sm);color:var(--text-3);margin-top:16px;opacity:0;animation:rise 500ms 400ms var(--ease) forwards;">→ O resultado é uma experiência fluida com coordenação central para segurança e gerenciamento.</p>
     <div class="slide-footer animate-children" style="margin-top:auto;">
-      <span>Exemplo 1 de 2</span><span>09 / 11</span>
+      <span>Exemplo 1 de 2</span><span>05 / 07</span>
     </div>
   </section>
 
@@ -1380,26 +1414,26 @@ body {
       <div class="tl-col">
         <div class="tl-badge">01</div>
         <div class="tl-rule"></div>
-        <p class="tl-text">Sensores coletam dados de máquinas, câmeras ou ambiente.</p>
+        <p class="tl-text">Sensores coletam dados.</p>
       </div>
       <div class="tl-col">
         <div class="tl-badge">02</div>
         <div class="tl-rule"></div>
-        <p class="tl-text">Edge filtra, detecta eventos e toma decisões locais rápidas.</p>
+        <p class="tl-text">Edge filtra e decide.</p>
       </div>
       <div class="tl-col">
         <div class="tl-badge">03</div>
         <div class="tl-rule"></div>
-        <p class="tl-text">Cloud armazena histórico, gera dashboards e treina modelos.</p>
+        <p class="tl-text">Cloud guarda e aprende.</p>
       </div>
       <div class="tl-col">
         <div class="tl-badge">04</div>
         <div class="tl-rule"></div>
-        <p class="tl-text">Aplicações cliente mostram alertas e permitem intervenção humana.</p>
+        <p class="tl-text">Apps mostram alertas.</p>
       </div>
     </div>
     <div class="slide-footer animate-children" style="margin-top:auto;">
-      <span>Exemplo 2 de 2</span><span>10 / 11</span>
+      <span>Exemplo 2 de 2</span><span>06 / 07</span>
     </div>
   </section>
 
@@ -1416,17 +1450,17 @@ body {
         <div class="cl-col">
           <span class="cl-num">01 · Combinar</span>
           <div class="cl-title">É necessário</div>
-          <p>Nenhuma arquitetura isolada atende todos os requisitos de sistemas modernos — a combinação é a regra, não a exceção.</p>
+          <p>Combinar modelos virou regra.</p>
         </div>
         <div class="cl-col">
           <span class="cl-num">02 · Dividir</span>
           <div class="cl-title">É o núcleo</div>
-          <p>Centralizar o que precisa de controle e escala, aproximar o que exige velocidade, distribuir o que ganha com colaboração direta.</p>
+          <p>Controle no centro. Velocidade perto.</p>
         </div>
         <div class="cl-col">
           <span class="cl-num">03 · Projetar</span>
           <div class="cl-title">Desde o início</div>
-          <p>Segurança, sincronização, observabilidade e manutenção em sistemas híbridos precisam ser considerados na arquitetura, não depois.</p>
+          <p>Segurança e manutenção entram desde o início.</p>
         </div>
       </div>
       <div class="final-line" style="opacity:0;animation:rise 600ms 360ms var(--ease) forwards;">
@@ -1434,7 +1468,7 @@ body {
       </div>
       <div class="slide-footer animate-children" style="margin-top:auto;">
         <span>Arquiteturas Híbridas · Computação distribuída</span>
-        <span>11 / 11</span>
+        <span>07 / 07</span>
       </div>
     </div>
   </section>
@@ -1475,6 +1509,20 @@ slides.forEach((s,i) => {
   d.setAttribute('aria-label', s.dataset.title || `Slide ${i+1}`);
   d.addEventListener('click', () => go(i));
   dotsEl.appendChild(d);
+});
+
+document.querySelectorAll('[data-dev-accordion]').forEach(accordion => {
+  const panels = Array.from(accordion.querySelectorAll('.dev-panel'));
+  panels.forEach(panel => {
+    const tab = panel.querySelector('.dev-tab');
+    tab.addEventListener('click', () => {
+      panels.forEach(item => {
+        const isCurrent = item === panel;
+        item.classList.toggle('is-open', isCurrent);
+        item.querySelector('.dev-tab').setAttribute('aria-expanded', String(isCurrent));
+      });
+    });
+  });
 });
 
 function pad(n) { return String(n+1).padStart(2,'0'); }
@@ -1533,3 +1581,5 @@ updateUI();
 </script>
 </body>
 </html>
+
+
