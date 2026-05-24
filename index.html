@@ -1,0 +1,1363 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Arquiteturas Híbridas · IBM</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+/* ═══════════════════════════════════════════
+   TOKENS — IBM Carbon v11 White theme
+═══════════════════════════════════════════ */
+:root {
+  --gray-10:#f4f4f4; --gray-20:#e0e0e0; --gray-30:#c6c6c6;
+  --gray-40:#a8a8a8; --gray-50:#8d8d8d; --gray-60:#6f6f6f;
+  --gray-70:#525252; --gray-80:#393939; --gray-90:#262626; --gray-100:#161616;
+  --blue-10:#edf5ff; --blue-20:#d0e2ff; --blue-30:#a6c8ff;
+  --blue-40:#78a9ff; --blue-50:#4589ff; --blue-60:#0f62fe;
+  --blue-70:#0043ce; --blue-80:#002d9c; --blue-90:#001d6c; --blue-100:#001141;
+  --cyan-40:#33b1ff; --cyan-50:#1192e8;
+  --teal-40:#08bdba; --teal-50:#009d9a;
+  --purple-40:#be95ff; --purple-50:#a56eff; --purple-60:#8a3ffc;
+  --green-40:#42be65; --green-50:#24a148;
+  --yellow-30:#f1c21b;
+
+  --bg:#ffffff;
+  --layer-01:#f4f4f4;
+  --layer-02:#e0e0e0;
+  --border:#e0e0e0;
+  --border-strong:#8d8d8d;
+  --text:#161616;
+  --text-2:#525252;
+  --text-3:#6f6f6f;
+  --ibm:#0f62fe;
+
+  /* 3 font sizes only */
+  --fs-sm:  13px;
+  --fs-md:  18px;
+  --fs-lg:  clamp(2.4rem, 5vw, 4.8rem);
+
+  --sans: 'IBM Plex Sans', system-ui, sans-serif;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in: cubic-bezier(0.64, 0, 0.78, 0);
+}
+
+/* ═══════════════════════════════════════════
+   RESET
+═══════════════════════════════════════════ */
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+html,body { height:100%; }
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--text);
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ═══════════════════════════════════════════
+   SHELL
+═══════════════════════════════════════════ */
+.shell {
+  width: 100vw;
+  height: 100vh;
+  display: grid;
+  grid-template-rows: 48px 1fr 52px 4px;
+  overflow: hidden;
+}
+
+/* ── TOPBAR ─────────────────────────── */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 40px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg);
+  z-index: 30;
+  flex-shrink: 0;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: var(--fs-sm);
+  font-weight: 400;
+  color: var(--text-3);
+  letter-spacing: 0.01em;
+}
+.brand-sep { width:1px; height:14px; background:var(--border); }
+.counter   { font-size:var(--fs-sm); font-weight:500; color:var(--text-3); letter-spacing:0.04em; }
+.counter b { color:var(--ibm); font-weight:600; }
+
+/* ── SLIDES AREA ────────────────────── */
+.slides-area { position:relative; overflow:hidden; min-height:0; }
+
+/* ── SLIDE BASE ─────────────────────── */
+.slide {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 56px 40px 40px;
+  background: var(--bg);
+  opacity: 0;
+  pointer-events: none;
+  overflow: hidden;
+  will-change: transform, opacity;
+}
+.slide.active         { opacity:1; pointer-events:all; animation: enter-r 480ms var(--ease) forwards; }
+.slide.leaving-fwd    { display:flex; pointer-events:none; animation: exit-l 280ms var(--ease-in) forwards; }
+.slide.leaving-bwd    { display:flex; pointer-events:none; animation: exit-r 280ms var(--ease-in) forwards; }
+.slide.entering-bwd   { opacity:1; pointer-events:all; animation: enter-l 480ms var(--ease) forwards; }
+
+@keyframes enter-r { from{opacity:0;transform:translateX(60px)} to{opacity:1;transform:translateX(0)} }
+@keyframes enter-l { from{opacity:0;transform:translateX(-60px)} to{opacity:1;transform:translateX(0)} }
+@keyframes exit-l  { from{opacity:1;transform:translateX(0)} to{opacity:0;transform:translateX(-60px)} }
+@keyframes exit-r  { from{opacity:1;transform:translateX(0)} to{opacity:0;transform:translateX(60px)} }
+
+/* ── STAGGER SYSTEM ─────────────────── */
+/* All direct children of .animate-children get staggered reveal */
+.animate-children > * {
+  opacity: 0;
+  transform: translateY(20px);
+}
+.slide.active .animate-children > *:nth-child(1)  { animation: rise 520ms  60ms var(--ease) forwards; }
+.slide.active .animate-children > *:nth-child(2)  { animation: rise 520ms 130ms var(--ease) forwards; }
+.slide.active .animate-children > *:nth-child(3)  { animation: rise 520ms 200ms var(--ease) forwards; }
+.slide.active .animate-children > *:nth-child(4)  { animation: rise 520ms 270ms var(--ease) forwards; }
+.slide.active .animate-children > *:nth-child(5)  { animation: rise 520ms 340ms var(--ease) forwards; }
+.slide.active .animate-children > *:nth-child(6)  { animation: rise 520ms 410ms var(--ease) forwards; }
+@keyframes rise { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+
+/* Grid children stagger */
+.stagger-grid > * { opacity:0; transform:translateY(24px); }
+.slide.active .stagger-grid > *:nth-child(1) { animation: rise 500ms  80ms var(--ease) forwards; }
+.slide.active .stagger-grid > *:nth-child(2) { animation: rise 500ms 160ms var(--ease) forwards; }
+.slide.active .stagger-grid > *:nth-child(3) { animation: rise 500ms 240ms var(--ease) forwards; }
+.slide.active .stagger-grid > *:nth-child(4) { animation: rise 500ms 320ms var(--ease) forwards; }
+
+/* Line reveal — horizontal wipe */
+.line-reveal {
+  overflow: hidden;
+  position: relative;
+}
+.line-reveal::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--ibm);
+  transform: scaleX(1);
+  transform-origin: left;
+  animation: none;
+}
+.slide.active .line-reveal::after {
+  animation: wipe 500ms var(--ease) forwards;
+}
+.slide.active .line-reveal:nth-child(2)::after { animation-delay: 80ms; }
+.slide.active .line-reveal:nth-child(3)::after { animation-delay: 160ms; }
+@keyframes wipe { 0%{transform:scaleX(1)} 40%{transform:scaleX(1)} 100%{transform:scaleX(0);transform-origin:right} }
+
+/* Counter number roll */
+@keyframes count-in { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+
+/* Blue bar grow animation */
+.bar-grow { width:0; }
+.slide.active .bar-grow { animation: bar-expand 700ms var(--ease) forwards; }
+.slide.active .bar-grow:nth-child(2) { animation-delay: 120ms; }
+.slide.active .bar-grow:nth-child(3) { animation-delay: 240ms; }
+.slide.active .bar-grow:nth-child(4) { animation-delay: 360ms; }
+@keyframes bar-expand { from{width:0} to{width:var(--bar-target,100%)} }
+
+/* Slide-in from right for diagrams */
+@keyframes slide-in-r { from{opacity:0;transform:translateX(40px)} to{opacity:1;transform:translateX(0)} }
+@keyframes slide-in-l { from{opacity:0;transform:translateX(-40px)} to{opacity:1;transform:translateX(0)} }
+
+/* Fade scale in */
+@keyframes fade-scale { from{opacity:0;transform:scale(0.93)} to{opacity:1;transform:scale(1)} }
+
+/* SVG line draw */
+.draw-line { stroke-dashoffset: var(--dash-len, 400); animation: none; }
+.slide.active .draw-line { animation: draw 900ms var(--ease) forwards; }
+.slide.active .draw-line:nth-child(2n) { animation-delay: 200ms; }
+@keyframes draw { to { stroke-dashoffset: 0; } }
+
+/* Pulse dot */
+@keyframes pulse { 0%,100%{opacity:1;r:5px} 50%{opacity:0.3;r:8px} }
+.pulse-dot { animation: pulse 2.5s ease-in-out infinite; }
+.pulse-dot:nth-child(2) { animation-delay: 0.6s; }
+.pulse-dot:nth-child(3) { animation-delay: 1.2s; }
+.pulse-dot:nth-child(4) { animation-delay: 1.8s; }
+
+/* IBM dash flow */
+.dash-flow { stroke-dasharray:4 6; animation: dash-move 8s linear infinite; }
+@keyframes dash-move { to{stroke-dashoffset:-200} }
+
+/* ═══════════════════════════════════════════
+   TYPOGRAPHY — exactly 3 sizes
+   sm = 13px labels/meta
+   md = 18px body/cards
+   lg = clamp(2.4rem,5vw,4.8rem) headings
+═══════════════════════════════════════════ */
+.t-label {
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  color: var(--text-3);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  line-height: 1.4;
+}
+.t-body {
+  font-size: var(--fs-md);
+  font-weight: 400;
+  color: var(--text-2);
+  line-height: 1.65;
+}
+.t-heading {
+  font-size: var(--fs-lg);
+  font-weight: 300;
+  color: var(--text);
+  line-height: 1.0;
+  letter-spacing: -0.02em;
+}
+.t-heading strong { font-weight: 600; color: var(--ibm); }
+
+/* eyebrow — uses label size */
+.eyebrow {
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ibm);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.eyebrow::before { content:''; width:24px; height:2px; background:var(--ibm); flex-shrink:0; }
+
+/* ═══════════════════════════════════════════
+   IBM DESIGN COMPONENTS
+═══════════════════════════════════════════ */
+/* Accent rule */
+.rule { display:block; height:3px; background:var(--ibm); }
+.rule.cyan   { background:var(--cyan-40); }
+.rule.teal   { background:var(--teal-40); }
+.rule.purple { background:var(--purple-50); }
+.rule.green  { background:var(--green-40); }
+.rule.yellow { background:var(--yellow-30); }
+
+/* IBM corner bracket */
+.bracket { position:relative; }
+.bracket::before {
+  content:'';
+  position:absolute;
+  top:0; left:0;
+  width:14px; height:14px;
+  border-top:2px solid var(--ibm);
+  border-left:2px solid var(--ibm);
+  pointer-events:none;
+  z-index:1;
+}
+
+/* Tag */
+.tag {
+  display:inline-flex; align-items:center;
+  padding:0 10px; height:24px;
+  font-size:var(--fs-sm); font-weight:500;
+  letter-spacing:0.04em; text-transform:uppercase;
+  background:var(--blue-10);
+  color:var(--blue-70);
+  border:1px solid var(--blue-20);
+  white-space:nowrap;
+}
+.tag.teal   { background:#d2f4ea; color:var(--teal-50); border-color:var(--teal-40); }
+.tag.purple { background:#f6f2ff; color:var(--purple-60); border-color:var(--purple-40); }
+.tag.gray   { background:var(--layer-01); color:var(--text-2); border-color:var(--border); }
+
+/* Meter */
+.meter { height:4px; background:var(--layer-02); position:relative; overflow:hidden; }
+.meter-fill { position:absolute; inset:0; background:var(--ibm); width:0; transition:width 900ms var(--ease); }
+.meter-fill.cyan   { background:var(--cyan-40); }
+.meter-fill.teal   { background:var(--teal-40); }
+.meter-fill.purple { background:var(--purple-50); }
+
+/* ── IBM 8-bar texture ──────────────── */
+.ibm-bars {
+  position:absolute; inset:0; pointer-events:none;
+  background-image: repeating-linear-gradient(
+    to bottom, transparent 0, transparent 7px,
+    rgba(255,255,255,0.04) 7px, rgba(255,255,255,0.04) 8px
+  );
+}
+.ibm-dots {
+  position:absolute; inset:0; pointer-events:none;
+  background-image: radial-gradient(circle, rgba(255,255,255,0.08) 1px, transparent 1px);
+  background-size: 24px 24px;
+  mask-image: radial-gradient(ellipse at 75% 65%, black 20%, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse at 75% 65%, black 20%, transparent 75%);
+}
+
+/* ── Slide footer ───────────────────── */
+.slide-footer {
+  display:flex; justify-content:space-between; align-items:center;
+  margin-top:auto; padding-top:20px;
+  border-top:1px solid var(--border);
+  flex-shrink:0;
+}
+.slide-footer span { font-size:var(--fs-sm); color:var(--text-3); font-weight:400; }
+
+/* ═══════════════════════════════════════════
+   SLIDE 1 · CAPA (split panel)
+═══════════════════════════════════════════ */
+.cover-slide {
+  padding:0 !important;
+  display:grid !important;
+  grid-template-columns: 58% 42%;
+}
+
+.cover-left {
+  padding:64px 48px;
+  display:flex;
+  flex-direction:column;
+  justify-content:flex-end;
+  border-right:1px solid var(--border);
+  overflow:hidden;
+}
+.cover-left .eyebrow { opacity:0; animation: rise 500ms 100ms var(--ease) forwards; }
+.cover-left .t-heading { opacity:0; animation: rise 600ms 200ms var(--ease) forwards; }
+.cover-left .t-body    { opacity:0; animation: rise 500ms 320ms var(--ease) forwards; margin-top:24px; max-width:500px; }
+.cover-left .cover-meta { opacity:0; animation: rise 500ms 420ms var(--ease) forwards; margin-top:48px; }
+
+.cover-meta {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  grid-template-rows:1fr 1fr;
+  gap:1px;
+  background:var(--border);
+  border:1px solid var(--border);
+}
+.cover-meta-cell {
+  background:var(--layer-01);
+  padding:12px 16px;
+}
+.cover-meta-cell .t-label { display:block; margin-bottom:3px; }
+.cover-meta-cell .val { font-size:var(--fs-sm); font-weight:600; color:var(--text); line-height:1.3; }
+
+.cover-right {
+  background:var(--blue-90);
+  position:relative;
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  padding:48px 40px;
+}
+.cover-right .ibm-bars, .cover-right .ibm-dots { display:block; }
+.cover-right-inner {
+  position:relative;
+  z-index:1;
+  display:flex;
+  flex-direction:column;
+  height:100%;
+}
+.cover-big-num {
+  font-size:clamp(8rem,22vw,20rem);
+  font-weight:300;
+  line-height:1;
+  letter-spacing:-6px;
+  color:rgba(255,255,255,0.03);
+  position:absolute;
+  bottom:-0.08em; right:-0.04em;
+  user-select:none;
+  pointer-events:none;
+}
+.net-area {
+  flex:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  opacity:0;
+  animation: fade-scale 700ms 300ms var(--ease) forwards;
+}
+.net-area svg { width:100%; max-width:360px; height:auto; overflow:visible; }
+
+.cover-chips {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:1px;
+  background:rgba(255,255,255,0.08);
+  border:1px solid rgba(255,255,255,0.08);
+  opacity:0;
+  animation: rise 500ms 500ms var(--ease) forwards;
+}
+.cover-chip {
+  background:var(--blue-90);
+  padding:14px 16px;
+  transition:background 200ms;
+}
+.cover-chip:hover { background:var(--blue-80); }
+.cover-chip .t-label { color:var(--blue-30); display:block; margin-bottom:4px; }
+.cover-chip .val { font-size:var(--fs-md); font-weight:500; color:#fff; }
+
+/* ═══════════════════════════════════════════
+   SLIDE 2 · INTRODUÇÃO
+═══════════════════════════════════════════ */
+.intro-layout {
+  display:grid;
+  grid-template-columns:1.2fr 0.8fr;
+  gap:32px;
+  flex:1;
+  align-items:center;
+}
+.quote-panel {
+  background:var(--blue-90);
+  border-left:3px solid var(--blue-40);
+  padding:32px 28px;
+  position:relative;
+  overflow:hidden;
+  opacity:0;
+  animation: slide-in-r 540ms 280ms var(--ease) forwards;
+}
+.quote-panel .ibm-bars { display:block; opacity:0.5; }
+.quote-panel .q-label {
+  font-size:var(--fs-sm);
+  font-weight:600;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--blue-30);
+  display:block;
+  margin-bottom:20px;
+  position:relative;
+  z-index:1;
+}
+.quote-panel blockquote {
+  font-size:var(--fs-md);
+  font-weight:400;
+  line-height:1.65;
+  color:#fff;
+  border:none;
+  padding:0;
+  position:relative;
+  z-index:1;
+}
+.quote-mark {
+  position:absolute; bottom:8px; right:16px;
+  font-size:80px; font-weight:700; line-height:1;
+  color:var(--blue-70); user-select:none; pointer-events:none; z-index:0;
+}
+
+/* ═══════════════════════════════════════════
+   SLIDE 3 · QUATRO BLOCOS
+═══════════════════════════════════════════ */
+.four-grid {
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:1px;
+  background:var(--border);
+  border:1px solid var(--border);
+  flex:1;
+}
+.block-card {
+  background:var(--bg);
+  padding:32px 24px;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  position:relative;
+  overflow:hidden;
+  cursor:default;
+  transition:background 180ms ease;
+}
+.block-card:hover { background:var(--layer-01); }
+.block-card::before {
+  content:'';
+  position:absolute;
+  top:0; left:0; right:0;
+  height:3px;
+}
+.bc-b::before  { background:var(--ibm); }
+.bc-c::before  { background:var(--cyan-40); }
+.bc-t::before  { background:var(--teal-40); }
+.bc-p::before  { background:var(--purple-50); }
+
+.block-num  { font-size:var(--fs-sm); font-weight:500; color:var(--text-3); letter-spacing:0.08em; }
+.bc-b .block-num  { color:var(--ibm); }
+.bc-c .block-num  { color:var(--cyan-50); }
+.bc-t .block-num  { color:var(--teal-50); }
+.bc-p .block-num  { color:var(--purple-60); }
+
+.block-icon { font-size:2.2rem; line-height:1; }
+.bc-b .block-icon { color:var(--ibm); }
+.bc-c .block-icon { color:var(--cyan-40); }
+.bc-t .block-icon { color:var(--teal-40); }
+.bc-p .block-icon { color:var(--purple-50); }
+
+.block-card h3 {
+  font-size:var(--fs-md);
+  font-weight:600;
+  color:var(--text);
+  line-height:1.2;
+}
+.block-card p { font-size:var(--fs-sm); color:var(--text-2); line-height:1.65; }
+
+/* card stagger with rise */
+.slide.active .four-grid .block-card:nth-child(1) { animation: rise 520ms  80ms var(--ease) forwards; opacity:0; transform:translateY(24px); }
+.slide.active .four-grid .block-card:nth-child(2) { animation: rise 520ms 160ms var(--ease) forwards; opacity:0; transform:translateY(24px); }
+.slide.active .four-grid .block-card:nth-child(3) { animation: rise 520ms 240ms var(--ease) forwards; opacity:0; transform:translateY(24px); }
+.slide.active .four-grid .block-card:nth-child(4) { animation: rise 520ms 320ms var(--ease) forwards; opacity:0; transform:translateY(24px); }
+
+/* ═══════════════════════════════════════════
+   SLIDE 4 · FLOW
+═══════════════════════════════════════════ */
+.flow-row {
+  display:grid;
+  grid-template-columns:1fr 40px 1fr 40px 1fr;
+  border:1px solid var(--border);
+  margin-bottom:20px;
+  opacity:0;
+  animation: rise 500ms 200ms var(--ease) forwards;
+}
+.flow-node {
+  background:var(--layer-01);
+  padding:24px 20px;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  justify-content:center;
+  transition:background 180ms;
+  position:relative;
+}
+.flow-node::before {
+  content:'';
+  position:absolute;
+  top:0; left:0;
+  width:10px; height:10px;
+  border-top:2px solid var(--ibm);
+  border-left:2px solid var(--ibm);
+}
+.flow-node:hover { background:var(--layer-02); }
+.flow-node .t-label { margin-bottom:2px; }
+.flow-node .t-body  { color:var(--text); font-weight:600; font-size:var(--fs-sm); }
+.flow-arrow {
+  display:flex; align-items:center; justify-content:center;
+  background:var(--bg);
+  border-left:1px solid var(--border);
+  border-right:1px solid var(--border);
+}
+.flow-arrow svg { width:18px; }
+
+.info-box {
+  background:var(--layer-01);
+  border:1px solid var(--border);
+  border-left:3px solid var(--ibm);
+  padding:24px;
+  opacity:0;
+  animation: rise 500ms 340ms var(--ease) forwards;
+}
+.info-box h3 { font-size:var(--fs-md); font-weight:600; color:var(--text); margin-bottom:8px; }
+.info-box p  { font-size:var(--fs-sm); line-height:1.65; color:var(--text-2); }
+.chips { display:flex; flex-wrap:wrap; gap:8px; margin-top:16px; }
+
+/* ═══════════════════════════════════════════
+   SLIDE 5 · P2P
+═══════════════════════════════════════════ */
+.two-col {
+  display:grid;
+  grid-template-columns:0.85fr 1.15fr;
+  gap:32px;
+  align-items:center;
+  flex:1;
+}
+.diagram-box {
+  background:var(--layer-01);
+  border:1px solid var(--border);
+  height:100%;
+  min-height:240px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  opacity:0;
+  animation: slide-in-l 540ms 200ms var(--ease) forwards;
+}
+.diagram-box svg { width:88%; max-width:320px; height:auto; overflow:visible; }
+.col-text { opacity:0; animation: rise 500ms 340ms var(--ease) forwards; }
+.col-text .t-body { margin-top:16px; font-size:var(--fs-sm); }
+
+/* ═══════════════════════════════════════════
+   SLIDE 6 · EDGE + CLOUD
+═══════════════════════════════════════════ */
+.clean-list { list-style:none; padding:0; display:flex; flex-direction:column; gap:12px; }
+.clean-list li {
+  font-size:var(--fs-sm);
+  line-height:1.65;
+  color:var(--text-2);
+  padding-left:20px;
+  position:relative;
+}
+.clean-list li::before {
+  content:'';
+  position:absolute; left:0; top:0.55em;
+  width:10px; height:2px;
+  background:var(--ibm);
+}
+
+/* ═══════════════════════════════════════════
+   SLIDE 7 · TRADE-OFFS
+═══════════════════════════════════════════ */
+.tradeoff-grid {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:1px;
+  background:var(--border);
+  border:1px solid var(--border);
+  flex:1;
+}
+.tc {
+  background:var(--bg);
+  padding:32px 24px;
+  display:flex;
+  flex-direction:column;
+  position:relative;
+  overflow:hidden;
+  transition:background 180ms ease;
+}
+.tc:hover { background:var(--layer-01); }
+.tc::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; }
+.tc-s::before { background:var(--green-40); }
+.tc-w::before { background:var(--yellow-30); }
+.tc-i::before { background:var(--ibm); }
+.tc-lbl {
+  font-size:var(--fs-sm); font-weight:600; letter-spacing:0.1em;
+  text-transform:uppercase; margin-bottom:20px;
+}
+.tc-s .tc-lbl { color:var(--green-50); }
+.tc-w .tc-lbl { color:#7d4e17; }
+.tc-i .tc-lbl { color:var(--ibm); }
+.tc p { font-size:var(--fs-sm); line-height:1.7; color:var(--text-2); }
+.tc-wm {
+  position:absolute; bottom:8px; right:12px;
+  font-size:5.5rem; font-weight:700; line-height:1;
+  opacity:0.05; user-select:none; pointer-events:none;
+}
+.tc-s .tc-wm { color:var(--green-40); }
+.tc-w .tc-wm { color:var(--yellow-30); }
+.tc-i .tc-wm { color:var(--ibm); }
+
+.slide.active .tradeoff-grid .tc:nth-child(1) { animation:rise 500ms  80ms var(--ease) forwards; opacity:0; transform:translateY(24px); }
+.slide.active .tradeoff-grid .tc:nth-child(2) { animation:rise 500ms 160ms var(--ease) forwards; opacity:0; transform:translateY(24px); }
+.slide.active .tradeoff-grid .tc:nth-child(3) { animation:rise 500ms 240ms var(--ease) forwards; opacity:0; transform:translateY(24px); }
+
+/* ═══════════════════════════════════════════
+   SLIDE 8 · EXEMPLO VIDEOCONF
+═══════════════════════════════════════════ */
+.ex-grid {
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:1px;
+  background:var(--border);
+  border:1px solid var(--border);
+  flex:1;
+}
+.ex-card {
+  background:var(--bg);
+  padding:24px 20px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  position:relative;
+  transition:background 180ms;
+}
+.ex-card:hover { background:var(--layer-01); }
+.ex-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; }
+.ex-card:nth-child(1)::before { background:var(--ibm); }
+.ex-card:nth-child(2)::before { background:var(--cyan-40); }
+.ex-card:nth-child(3)::before { background:var(--purple-50); }
+.ex-card:nth-child(4)::before { background:var(--teal-40); }
+.ex-tag { font-size:var(--fs-sm); font-weight:600; text-transform:uppercase; letter-spacing:0.08em; }
+.ex-card:nth-child(1) .ex-tag { color:var(--ibm); }
+.ex-card:nth-child(2) .ex-tag { color:var(--cyan-50); }
+.ex-card:nth-child(3) .ex-tag { color:var(--purple-60); }
+.ex-card:nth-child(4) .ex-tag { color:var(--teal-50); }
+.ex-title { font-size:var(--fs-md); font-weight:600; color:var(--text); line-height:1.25; }
+.ex-desc  { font-size:var(--fs-sm); color:var(--text-2); line-height:1.65; }
+
+.slide.active .ex-grid .ex-card:nth-child(1) { animation:rise 500ms  60ms var(--ease) forwards; opacity:0; transform:translateY(24px); }
+.slide.active .ex-grid .ex-card:nth-child(2) { animation:rise 500ms 140ms var(--ease) forwards; opacity:0; transform:translateY(24px); }
+.slide.active .ex-grid .ex-card:nth-child(3) { animation:rise 500ms 220ms var(--ease) forwards; opacity:0; transform:translateY(24px); }
+.slide.active .ex-grid .ex-card:nth-child(4) { animation:rise 500ms 300ms var(--ease) forwards; opacity:0; transform:translateY(24px); }
+
+/* ═══════════════════════════════════════════
+   SLIDE 9 · IOT TIMELINE
+═══════════════════════════════════════════ */
+.tl-grid {
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:1px;
+  background:var(--border);
+  border:1px solid var(--border);
+  flex:1;
+}
+.tl-col {
+  background:var(--bg);
+  padding:28px 20px;
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+  position:relative;
+  transition:background 180ms;
+}
+.tl-col:hover { background:var(--layer-01); }
+.tl-badge {
+  width:36px; height:36px; flex-shrink:0;
+  border:2px solid var(--ibm);
+  display:flex; align-items:center; justify-content:center;
+  font-size:var(--fs-sm); font-weight:600; color:var(--ibm);
+  transition:background 200ms;
+}
+.tl-col:hover .tl-badge { background:var(--blue-10); }
+.tl-col:nth-child(2) .tl-badge { border-color:var(--cyan-40); color:var(--cyan-50); }
+.tl-col:nth-child(2):hover .tl-badge { background:#e5f6ff; }
+.tl-col:nth-child(3) .tl-badge { border-color:var(--teal-40); color:var(--teal-50); }
+.tl-col:nth-child(3):hover .tl-badge { background:#d2f4ea; }
+.tl-col:nth-child(4) .tl-badge { border-color:var(--purple-50); color:var(--purple-60); }
+.tl-col:nth-child(4):hover .tl-badge { background:#f6f2ff; }
+
+.tl-rule { height:3px; width:0; background:var(--ibm); }
+.tl-col:nth-child(2) .tl-rule { background:var(--cyan-40); }
+.tl-col:nth-child(3) .tl-rule { background:var(--teal-40); }
+.tl-col:nth-child(4) .tl-rule { background:var(--purple-50); }
+
+.slide.active .tl-col:nth-child(1) .tl-rule { animation: bar-expand 700ms  400ms var(--ease) forwards; }
+.slide.active .tl-col:nth-child(2) .tl-rule { animation: bar-expand 700ms  560ms var(--ease) forwards; }
+.slide.active .tl-col:nth-child(3) .tl-rule { animation: bar-expand 700ms  720ms var(--ease) forwards; }
+.slide.active .tl-col:nth-child(4) .tl-rule { animation: bar-expand 700ms  880ms var(--ease) forwards; }
+
+.tl-text { font-size:var(--fs-sm); line-height:1.65; color:var(--text); }
+
+.slide.active .tl-grid .tl-col:nth-child(1) { animation:rise 500ms  80ms var(--ease) forwards; opacity:0; transform:translateY(24px); }
+.slide.active .tl-grid .tl-col:nth-child(2) { animation:rise 500ms 160ms var(--ease) forwards; opacity:0; transform:translateY(24px); }
+.slide.active .tl-grid .tl-col:nth-child(3) { animation:rise 500ms 240ms var(--ease) forwards; opacity:0; transform:translateY(24px); }
+.slide.active .tl-grid .tl-col:nth-child(4) { animation:rise 500ms 320ms var(--ease) forwards; opacity:0; transform:translateY(24px); }
+
+/* ═══════════════════════════════════════════
+   SLIDE 10 · CONCLUSÃO (blue)
+═══════════════════════════════════════════ */
+.conclusion-slide { background:var(--blue-90) !important; }
+.conclusion-slide .eyebrow { color:var(--blue-30); }
+.conclusion-slide .eyebrow::before { background:var(--blue-30); }
+.conclusion-slide .t-heading { color:#fff; }
+.conclusion-slide .t-heading strong { color:var(--cyan-40); }
+.conclusion-slide .slide-footer { border-top-color:rgba(255,255,255,0.12); }
+.conclusion-slide .slide-footer span { color:var(--blue-30); }
+
+.closing-grid {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:1px;
+  background:rgba(255,255,255,0.08);
+  border:1px solid rgba(255,255,255,0.08);
+  flex:1;
+  margin-bottom:28px;
+}
+.cl-col {
+  background:var(--blue-90);
+  padding:28px 24px;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  position:relative;
+  overflow:hidden;
+  transition:background 200ms;
+}
+.cl-col:hover { background:var(--blue-80); }
+.cl-col::after { content:''; position:absolute; bottom:0; left:0; right:0; height:3px; }
+.cl-col:nth-child(1)::after { background:var(--blue-40); }
+.cl-col:nth-child(2)::after { background:var(--cyan-40); }
+.cl-col:nth-child(3)::after { background:var(--teal-40); }
+.cl-num { font-size:var(--fs-sm); font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:var(--blue-30); }
+.cl-title { font-size:var(--fs-md); font-weight:600; color:#fff; line-height:1.2; }
+.cl-col p { font-size:var(--fs-sm); line-height:1.7; color:var(--blue-20); }
+
+.slide.active .closing-grid .cl-col:nth-child(1) { animation:rise 500ms  80ms var(--ease) forwards; opacity:0; transform:translateY(24px); }
+.slide.active .closing-grid .cl-col:nth-child(2) { animation:rise 500ms 160ms var(--ease) forwards; opacity:0; transform:translateY(24px); }
+.slide.active .closing-grid .cl-col:nth-child(3) { animation:rise 500ms 240ms var(--ease) forwards; opacity:0; transform:translateY(24px); }
+
+.final-line {
+  font-size:var(--fs-lg);
+  font-weight:300;
+  color:#fff;
+  display:flex;
+  align-items:center;
+  gap:20px;
+  line-height:1;
+  flex-shrink:0;
+}
+.final-line strong { font-weight:300; color:var(--cyan-40); }
+.final-line::after { content:''; flex:1; height:1px; background:rgba(255,255,255,0.12); }
+
+/* ═══════════════════════════════════════════
+   CONTROLS
+═══════════════════════════════════════════ */
+.controls {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 40px;
+  border-top:1px solid var(--border);
+  background:var(--bg);
+  z-index:30; flex-shrink:0;
+}
+.ctrl-btn {
+  font-family:var(--sans);
+  font-size:var(--fs-sm);
+  font-weight:500;
+  letter-spacing:0.04em;
+  padding:0 20px; height:32px;
+  background:transparent;
+  border:1px solid var(--border);
+  color:var(--text-2);
+  cursor:pointer;
+  transition:background 150ms, border-color 150ms, color 150ms;
+}
+.ctrl-btn:hover:not(:disabled) { background:var(--ibm); border-color:var(--ibm); color:#fff; }
+.ctrl-btn:disabled { opacity:0.25; cursor:not-allowed; }
+
+.dots { display:flex; align-items:center; gap:6px; }
+.dot {
+  width:6px; height:6px; background:var(--layer-02); cursor:pointer;
+  transition:background 200ms, width 200ms;
+  border-radius:0;
+}
+.dot.active { background:var(--ibm); width:22px; }
+.dot:hover:not(.active) { background:var(--gray-40); }
+
+.progress-rail { height:4px; background:var(--layer-02); flex-shrink:0; }
+.progress-fill { height:100%; background:var(--ibm); transition:width 420ms var(--ease); }
+
+/* ═══════════════════════════════════════════
+   RESPONSIVE — 4 breakpoints
+═══════════════════════════════════════════ */
+@media (max-width: 1100px) {
+  .cover-slide { grid-template-columns:1fr; }
+  .cover-right { display:none; }
+  .cover-left  { padding:48px 32px; border-right:none; justify-content:center; }
+  .four-grid   { grid-template-columns:repeat(2,1fr); }
+  :root        { --fs-lg: clamp(2rem,4.5vw,3.5rem); }
+}
+
+@media (max-width: 860px) {
+  body { overflow:auto; }
+  .shell { height:auto; min-height:100vh; grid-template-rows:48px 1fr 52px 4px; }
+  .slides-area { min-height:580px; }
+  .slide { position:relative; }
+  .slide:not(.active) { display:none !important; }
+  .slide.active { animation:none !important; opacity:1; }
+  .topbar, .controls { padding:0 20px; }
+  .slide { padding:40px 20px 28px; }
+  .cover-left { padding:36px 20px; }
+
+  .two-col    { grid-template-columns:1fr; }
+  .intro-layout { grid-template-columns:1fr; }
+  .flow-row   { grid-template-columns:1fr; border:1px solid var(--border); }
+  .flow-arrow { height:32px; border-top:1px solid var(--border); border-bottom:1px solid var(--border); border-left:none; border-right:none; }
+  .flow-arrow svg { transform:rotate(90deg); }
+  .tradeoff-grid, .ex-grid, .tl-grid, .closing-grid { grid-template-columns:1fr; }
+  .diagram-box { min-height:180px; }
+  .dots { display:none; }
+  :root { --fs-lg:clamp(1.8rem,6vw,2.8rem); }
+}
+
+@media (max-width: 560px) {
+  .four-grid { grid-template-columns:1fr; }
+  .cover-meta { grid-template-columns:1fr; }
+  :root { --fs-lg:clamp(1.5rem,7vw,2.4rem); }
+}
+
+@media (prefers-reduced-motion:reduce) {
+  *,*::before,*::after { animation-duration:0.01ms !important; transition-duration:0.1s !important; }
+}
+</style>
+</head>
+<body>
+<div class="shell">
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <div class="brand">
+    <svg xmlns="http://www.w3.org/2000/svg" width="42" height="17" viewBox="0 0 424.66 158.45" aria-label="IBM">
+      <path fill="#0f62fe" d="M407.85,149.79c0-4.91,3.74-8.65,8.4-8.65s8.4,3.74,8.4,8.65-3.74,8.65-8.4,8.65-8.4-3.74-8.4-8.65ZM422.68,150.34v-1.09c0-3.53-2.77-6.3-6.43-6.3s-6.43,2.77-6.43,6.3v1.09c0,3.53,2.77,6.3,6.43,6.3s6.43-2.77,6.43-6.3ZM414.99,154.25h-2.14v-8.78h3.99c1.97,0,2.98,1.18,2.98,2.77,0,1.39-.63,2.27-1.6,2.65l1.97,3.36h-2.35l-1.64-3.02h-1.22v3.02ZM416.59,149.63c.67,0,1.05-.29,1.05-.92v-.63c0-.63-.38-.92-1.05-.92h-1.6v2.48h1.6ZM0,147h77v11H0v-11ZM0,137h77v-11H0v11ZM22,116h33v-11H22v11ZM22,95h33v-11H22v11ZM22,74h33v-11H22v11ZM55,42H22v11h33v-11ZM0,32h77v-11H0v11ZM0,11h77V0H0v11ZM88,137h117.37c1.97-3.4,3.47-7.09,4.43-11h-121.79v11ZM196.18,84h-86.18v11h95.36c-2.42-4.17-5.52-7.89-9.18-11ZM110,63v11h86.18c3.65-3.11,6.76-6.83,9.18-11h-95.36ZM205.37,21h-117.37v11h121.79c-.96-3.91-2.46-7.6-4.43-11ZM169,0h-81v11h109.33c-7.47-6.83-17.41-11-28.33-11ZM110,53h33v-11h-33v11ZM174,53h35.53c.95-3.51,1.47-7.19,1.47-11h-37v11ZM110,116h33v-11h-33v11ZM174,105v11h37c0-3.81-.52-7.49-1.47-11h-35.53ZM88,158h81c11,0,20.86-4.17,28.33-11h-109.33v11ZM308,158l3.82-11h-7.65l3.82,11ZM300.67,137h14.67l3.86-11h-22.39l3.86,11ZM293.29,116h29.41l3.86-11h-37.14l3.86,11ZM285.92,95h44.16l3.86-11h-51.88l3.86,11ZM242,53h59.43l-3.83-11h-55.61v11ZM321.87,32h74.13v-11h-70.3s-3.83,11-3.83,11ZM333,0l-3.82,11h66.82V0h-63ZM220,158h55v-11h-55v11ZM220,137h55v-11h-55v11ZM242,116h33v-11h-33v11ZM242,95h33v-11h-33v11ZM374,42h-55.6l-3.83,11h59.43v-11ZM341,74h33v-11h-62.91l-3.09,8.89-3.09-8.89h-62.91v11h33v-10.11l3.55,10.11h58.9l3.55-10.11v10.11ZM374,84h-33v11h33v-11ZM341,116h33v-11h-33v11ZM341,137h55v-11h-55v11ZM341,158h55v-11h-55v11ZM294.13,32l-3.83-11h-70.3v11h74.13ZM286.83,11l-3.83-11h-63v11h66.83Z"/>
+    </svg>
+    <span class="brand-sep"></span>
+    <span>Seminário · Arquiteturas Híbridas</span>
+  </div>
+  <div class="counter"><b id="cur">01</b>/<span id="tot">10</span></div>
+</header>
+
+<!-- SLIDES -->
+<div class="slides-area" id="slidesArea">
+
+  <!-- 1 · CAPA -->
+  <section class="slide active cover-slide" data-title="Título">
+    <div class="cover-left">
+      <p class="eyebrow">Computação distribuída</p>
+      <h1 class="t-heading">Arquiteturas<br/><strong>Híbridas</strong></h1>
+      <p class="t-body">Combinações de cliente-servidor,<br/>P2P, edge e cloud</p>
+      <div class="cover-meta">
+        <div class="cover-meta-cell">
+          <span class="t-label">Apresentadora</span>
+          <span class="val">Maria Eduarda Eguchi</span>
+        </div>
+        <div class="cover-meta-cell">
+          <span class="t-label">Apresentador</span>
+          <span class="val">Matheus Musashi</span>
+        </div>
+        <div class="cover-meta-cell">
+          <span class="t-label">Apresentador</span>
+          <span class="val">Kaike Vitorino</span>
+        </div>
+        <div class="cover-meta-cell">
+          <span class="t-label">Apresentadora</span>
+          <span class="val">Livia Lemos</span>
+        </div>
+      </div>
+    </div>
+    <div class="cover-right">
+      <div class="ibm-bars"></div>
+      <div class="ibm-dots"></div>
+      <div class="cover-big-num">H</div>
+      <div class="cover-right-inner">
+        <div class="net-area">
+          <svg viewBox="0 0 340 260" aria-hidden="true">
+            <!-- connections - dashed animated -->
+            <line class="dash-flow" x1="60" y1="65" x2="170" y2="130" stroke="rgba(120,169,255,0.4)" stroke-width="1.5" fill="none"/>
+            <line class="dash-flow" x1="280" y1="65" x2="170" y2="130" stroke="rgba(51,177,255,0.4)" stroke-width="1.5" fill="none" style="animation-delay:-3s"/>
+            <line class="dash-flow" x1="70" y1="205" x2="170" y2="130" stroke="rgba(190,149,255,0.4)" stroke-width="1.5" fill="none" style="animation-delay:-5s"/>
+            <line class="dash-flow" x1="275" y1="200" x2="170" y2="130" stroke="rgba(8,189,186,0.4)" stroke-width="1.5" fill="none" style="animation-delay:-1.5s"/>
+            <line class="dash-flow" x1="60" y1="65" x2="70" y2="205" stroke="rgba(120,169,255,0.2)" stroke-width="1" fill="none" style="animation-delay:-4s"/>
+            <line class="dash-flow" x1="280" y1="65" x2="275" y2="200" stroke="rgba(51,177,255,0.2)" stroke-width="1" fill="none" style="animation-delay:-2s"/>
+            <!-- hub -->
+            <rect x="143" y="108" width="54" height="44" fill="rgba(15,98,254,0.15)" stroke="#4589ff" stroke-width="1.5"/>
+            <text x="170" y="134" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="10" font-weight="600" fill="#78a9ff" letter-spacing="0.5">HUB</text>
+            <!-- nodes -->
+            <circle cx="60" cy="65" r="24" fill="rgba(0,29,108,0.9)" stroke="#4589ff" stroke-width="2" class="pulse-dot"/>
+            <text x="60" y="69" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="9" font-weight="600" fill="#78a9ff">CLIENTE</text>
+            <circle cx="280" cy="65" r="24" fill="rgba(0,29,108,0.9)" stroke="#33b1ff" stroke-width="2" class="pulse-dot"/>
+            <text x="280" y="69" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="9" font-weight="600" fill="#33b1ff">CLOUD</text>
+            <circle cx="70" cy="205" r="24" fill="rgba(0,29,108,0.9)" stroke="#08bdba" stroke-width="2" class="pulse-dot"/>
+            <text x="70" y="209" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="9" font-weight="600" fill="#08bdba">EDGE</text>
+            <circle cx="275" cy="200" r="24" fill="rgba(0,29,108,0.9)" stroke="#be95ff" stroke-width="2" class="pulse-dot"/>
+            <text x="275" y="204" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="9" font-weight="600" fill="#be95ff">P2P</text>
+          </svg>
+        </div>
+        <div class="cover-chips">
+          <div class="cover-chip"><span class="t-label">camadas</span><span class="val">4 modelos</span></div>
+          <div class="cover-chip"><span class="t-label">abordagem</span><span class="val">Híbrida</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2 · INTRODUÇÃO -->
+  <section class="slide" data-title="Introdução">
+    <div class="animate-children">
+      <p class="eyebrow">Introdução</p>
+      <h2 class="t-heading">Por que arquiteturas híbridas <strong>existem</strong>?</h2>
+    </div>
+    <div class="intro-layout" style="margin-top:28px;">
+      <div class="animate-children">
+        <p class="t-body" style="font-size:var(--fs-md);color:var(--text);font-weight:400;margin-bottom:16px;">Sistemas modernos raramente dependem de um único modelo. Eles combinam abordagens para ganhar desempenho, escala, disponibilidade e melhor experiência do usuário.</p>
+        <p class="t-body">Uma arquitetura híbrida distribui responsabilidades entre diferentes camadas: parte roda no dispositivo do usuário, parte em servidores centrais, parte perto do usuário e, em alguns casos, diretamente entre usuários.</p>
+      </div>
+      <div class="quote-panel">
+        <div class="ibm-bars"></div>
+        <span class="q-label">Ideia central</span>
+        <blockquote>"Não é qual arquitetura é melhor, mas qual parte do sistema deve viver em qual lugar."</blockquote>
+        <span class="quote-mark">"</span>
+      </div>
+    </div>
+    <div class="slide-footer animate-children" style="margin-top:auto;">
+      <span>Computação distribuída</span>
+      <span>02 / 10</span>
+    </div>
+  </section>
+
+  <!-- 3 · QUATRO BLOCOS -->
+  <section class="slide" data-title="Conceitos-base">
+    <div class="animate-children">
+      <p class="eyebrow">Conceitos-base</p>
+      <h2 class="t-heading">Os <strong>quatro blocos</strong> principais</h2>
+    </div>
+    <div class="four-grid" style="margin-top:28px;">
+      <article class="block-card bc-b">
+        <span class="block-num">01 / 04</span>
+        <div class="block-icon">⇌</div>
+        <h3>Cliente-servidor</h3>
+        <p>Clientes pedem recursos; servidores processam, armazenam e respondem. Base da Web e das APIs REST.</p>
+      </article>
+      <article class="block-card bc-c">
+        <span class="block-num">02 / 04</span>
+        <div class="block-icon">⬡</div>
+        <h3>P2P</h3>
+        <p>Dispositivos se comunicam diretamente, compartilhando carga sem depender de um servidor central.</p>
+      </article>
+      <article class="block-card bc-t">
+        <span class="block-num">03 / 04</span>
+        <div class="block-icon">◈</div>
+        <h3>Edge</h3>
+        <p>Processamento no ponto mais próximo do usuário ou sensor — CDNs, gateways IoT e redes móveis.</p>
+      </article>
+      <article class="block-card bc-p">
+        <span class="block-num">04 / 04</span>
+        <div class="block-icon">☁</div>
+        <h3>Cloud</h3>
+        <p>Infraestrutura elástica para escala global, armazenamento persistente e serviços gerenciados.</p>
+      </article>
+    </div>
+    <div class="slide-footer animate-children" style="margin-top:auto;">
+      <span>Conceitos-base</span><span>03 / 10</span>
+    </div>
+  </section>
+
+  <!-- 4 · CLIENTE-SERVIDOR + CLOUD -->
+  <section class="slide" data-title="Cliente-servidor + cloud">
+    <div class="animate-children">
+      <p class="eyebrow">Desenvolvimento · 1 de 3</p>
+      <h2 class="t-heading">Cliente-servidor <strong>+ cloud</strong></h2>
+    </div>
+    <div class="flow-row" style="margin-top:28px;">
+      <div class="flow-node">
+        <span class="t-label">apresentação</span>
+        <span class="t-body" style="color:var(--text);font-weight:600;font-size:var(--fs-sm);">Aplicativo / Navegador</span>
+      </div>
+      <div class="flow-arrow">
+        <svg viewBox="0 0 18 18" fill="none"><path d="M2 9H16M11 4L16 9L11 14" stroke="#6f6f6f" stroke-width="1.5" stroke-linecap="square"/></svg>
+      </div>
+      <div class="flow-node">
+        <span class="t-label">lógica de negócio</span>
+        <span class="t-body" style="color:var(--text);font-weight:600;font-size:var(--fs-sm);">API / Backend</span>
+      </div>
+      <div class="flow-arrow">
+        <svg viewBox="0 0 18 18" fill="none"><path d="M2 9H16M11 4L16 9L11 14" stroke="#6f6f6f" stroke-width="1.5" stroke-linecap="square"/></svg>
+      </div>
+      <div class="flow-node">
+        <span class="t-label">persistência &amp; serviços</span>
+        <span class="t-body" style="color:var(--text);font-weight:600;font-size:var(--fs-sm);">Banco · Filas · IA · Storage</span>
+      </div>
+    </div>
+    <div class="info-box" style="margin-top:0;">
+      <h3>Quando faz sentido?</h3>
+      <p>Base muito comum para sistemas web e mobile. A cloud facilita escalar, centralizar regras de negócio, integrar serviços e armazenar dados com alta disponibilidade.</p>
+      <div class="chips">
+        <span class="tag">controle central</span>
+        <span class="tag">escala</span>
+        <span class="tag">segurança</span>
+        <span class="tag">manutenção simples</span>
+      </div>
+    </div>
+    <div class="slide-footer animate-children" style="margin-top:auto;">
+      <span>Desenvolvimento · 1 de 3</span><span>04 / 10</span>
+    </div>
+  </section>
+
+  <!-- 5 · P2P + SERVIDOR -->
+  <section class="slide" data-title="P2P + servidor central">
+    <div class="animate-children">
+      <p class="eyebrow">Desenvolvimento · 2 de 3</p>
+      <h2 class="t-heading">P2P <strong>+ servidor</strong> central</h2>
+    </div>
+    <div class="two-col" style="margin-top:28px;">
+      <div class="diagram-box">
+        <svg viewBox="0 0 280 230" aria-hidden="true">
+          <line class="dash-flow" x1="55" y1="55" x2="140" y2="115" stroke="var(--gray-30)" stroke-width="1.5" fill="none"/>
+          <line class="dash-flow" x1="225" y1="55" x2="140" y2="115" stroke="var(--gray-30)" stroke-width="1.5" fill="none" style="animation-delay:-3s"/>
+          <line class="dash-flow" x1="45" y1="185" x2="140" y2="115" stroke="var(--gray-30)" stroke-width="1.5" fill="none" style="animation-delay:-1.5s"/>
+          <line class="dash-flow" x1="235" y1="185" x2="140" y2="115" stroke="var(--gray-30)" stroke-width="1.5" fill="none" style="animation-delay:-4.5s"/>
+          <line class="dash-flow" x1="55" y1="55" x2="45" y2="185" stroke="var(--gray-20)" stroke-width="1" fill="none" style="animation-delay:-2s"/>
+          <line class="dash-flow" x1="225" y1="55" x2="235" y2="185" stroke="var(--gray-20)" stroke-width="1" fill="none" style="animation-delay:-5s"/>
+          <!-- peers -->
+          <circle cx="55" cy="55" r="22" fill="var(--layer-01)" stroke="var(--ibm)" stroke-width="2"/>
+          <text x="55" y="59" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="11" font-weight="700" fill="var(--ibm)">A</text>
+          <circle cx="225" cy="55" r="22" fill="var(--layer-01)" stroke="var(--ibm)" stroke-width="2"/>
+          <text x="225" y="59" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="11" font-weight="700" fill="var(--ibm)">B</text>
+          <circle cx="45" cy="185" r="22" fill="var(--layer-01)" stroke="var(--ibm)" stroke-width="2"/>
+          <text x="45" y="189" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="11" font-weight="700" fill="var(--ibm)">C</text>
+          <circle cx="235" cy="185" r="22" fill="var(--layer-01)" stroke="var(--ibm)" stroke-width="2"/>
+          <text x="235" y="189" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="11" font-weight="700" fill="var(--ibm)">D</text>
+          <!-- server -->
+          <rect x="107" y="97" width="66" height="36" fill="var(--blue-10)" stroke="var(--ibm)" stroke-width="2"/>
+          <text x="140" y="119" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="9" font-weight="600" fill="var(--ibm)" letter-spacing="0.5">SERVIDOR</text>
+        </svg>
+      </div>
+      <div class="col-text">
+        <p class="t-body" style="font-size:var(--fs-md);color:var(--text);font-weight:400;margin-bottom:16px;">O servidor cuida de login, descoberta de pares, sinalização e autorização. A troca pesada de dados acontece diretamente entre os dispositivos.</p>
+        <p class="t-body">Isso reduz carga no servidor e melhora a comunicação em tempo real, mas traz desafios de NAT, segurança, confiabilidade e moderação.</p>
+      </div>
+    </div>
+    <div class="slide-footer animate-children" style="margin-top:auto;">
+      <span>Desenvolvimento · 2 de 3</span><span>05 / 10</span>
+    </div>
+  </section>
+
+  <!-- 6 · EDGE + CLOUD -->
+  <section class="slide" data-title="Edge + cloud">
+    <div class="animate-children">
+      <p class="eyebrow">Desenvolvimento · 3 de 3</p>
+      <h2 class="t-heading">Edge <strong>+ cloud</strong></h2>
+    </div>
+    <div class="two-col" style="margin-top:28px;">
+      <div class="diagram-box">
+        <svg viewBox="0 0 300 220" aria-hidden="true">
+          <line class="dash-flow" x1="68" y1="175" x2="150" y2="108" stroke="var(--teal-40)" stroke-width="1.5" fill="none"/>
+          <line class="dash-flow" x1="150" y1="108" x2="255" y2="58" stroke="var(--ibm)" stroke-width="1.5" fill="none" style="animation-delay:-2s"/>
+          <!-- sensor -->
+          <rect x="22" y="153" width="92" height="44" fill="var(--layer-01)" stroke="var(--teal-40)" stroke-width="2"/>
+          <text x="68" y="171" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="9" font-weight="700" fill="var(--teal-50)" letter-spacing="0.5">SENSOR</text>
+          <text x="68" y="186" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="8" fill="var(--text-3)">IoT device</text>
+          <!-- edge -->
+          <rect x="104" y="86" width="92" height="44" fill="var(--blue-10)" stroke="var(--ibm)" stroke-width="2"/>
+          <text x="150" y="104" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="9" font-weight="700" fill="var(--ibm)" letter-spacing="0.5">EDGE</text>
+          <text x="150" y="119" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="8" fill="var(--text-3)">gateway · filtro</text>
+          <!-- cloud -->
+          <ellipse cx="255" cy="62" rx="40" ry="26" fill="var(--layer-01)" stroke="var(--purple-50)" stroke-width="2"/>
+          <text x="255" y="58" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="9" font-weight="700" fill="var(--purple-60)" letter-spacing="0.5">CLOUD</text>
+          <text x="255" y="73" text-anchor="middle" font-family="IBM Plex Sans,sans-serif" font-size="8" fill="var(--text-3)">histórico · IA</text>
+        </svg>
+      </div>
+      <div class="col-text">
+        <p class="t-body" style="font-size:var(--fs-md);color:var(--text);font-weight:400;margin-bottom:20px;">A edge processa o que precisa ser rápido ou local. A cloud recebe dados agregados, treina modelos, guarda histórico e coordena o sistema.</p>
+        <ul class="clean-list">
+          <li>Menor latência para decisões imediatas.</li>
+          <li>Menos tráfego enviado para a nuvem.</li>
+          <li>Mais privacidade quando dados sensíveis ficam locais.</li>
+        </ul>
+      </div>
+    </div>
+    <div class="slide-footer animate-children" style="margin-top:auto;">
+      <span>Desenvolvimento · 3 de 3</span><span>06 / 10</span>
+    </div>
+  </section>
+
+  <!-- 7 · TRADE-OFFS -->
+  <section class="slide" data-title="Trade-offs">
+    <div class="animate-children">
+      <p class="eyebrow">Análise</p>
+      <h2 class="t-heading">O que melhora e o que <strong>complica</strong>?</h2>
+    </div>
+    <div class="tradeoff-grid" style="margin-top:28px;">
+      <div class="tc tc-s">
+        <span class="tc-lbl">Benefícios</span>
+        <p>Desempenho e menor latência para operações críticas. Resiliência: falhas em uma camada não derrubam o sistema. Uso eficiente de recursos e melhor experiência do usuário.</p>
+        <span class="tc-wm">+</span>
+      </div>
+      <div class="tc tc-w">
+        <span class="tc-lbl">Custos</span>
+        <p>Maior complexidade de desenvolvimento e operação. Sincronização de estado entre camadas é difícil. Observabilidade distribuída exige ferramentas dedicadas e surface de segurança maior.</p>
+        <span class="tc-wm">−</span>
+      </div>
+      <div class="tc tc-i">
+        <span class="tc-lbl">Como decidir?</span>
+        <p>A arquitetura deve nascer dos requisitos: latência tolerada, custo de infraestrutura, privacidade dos dados, volume de escala, nível de conectividade e facilidade de manutenção.</p>
+        <span class="tc-wm">?</span>
+      </div>
+    </div>
+    <div class="slide-footer animate-children" style="margin-top:auto;">
+      <span>Análise de trade-offs</span><span>07 / 10</span>
+    </div>
+  </section>
+
+  <!-- 8 · EXEMPLO VIDEOCONFERÊNCIA -->
+  <section class="slide" data-title="Exemplo: Videoconferência">
+    <div class="animate-children">
+      <p class="eyebrow">Exemplo 1</p>
+      <h2 class="t-heading">Videoconferência em <strong>tempo real</strong></h2>
+    </div>
+    <div class="ex-grid" style="margin-top:28px;">
+      <div class="ex-card">
+        <span class="ex-tag">Cloud</span>
+        <span class="ex-title">Persistência global</span>
+        <span class="ex-desc">Login, agenda, gravações, histórico e permissões.</span>
+      </div>
+      <div class="ex-card">
+        <span class="ex-tag">Servidor</span>
+        <span class="ex-title">Coordenação de sessão</span>
+        <span class="ex-desc">Sinalização, salas, presença e controle de sessão.</span>
+      </div>
+      <div class="ex-card">
+        <span class="ex-tag">P2P / Media server</span>
+        <span class="ex-title">Mídia em tempo real</span>
+        <span class="ex-desc">Áudio, vídeo e compartilhamento de tela em baixa latência.</span>
+      </div>
+      <div class="ex-card">
+        <span class="ex-tag">Edge / CDN</span>
+        <span class="ex-title">Proximidade ao usuário</span>
+        <span class="ex-desc">Entrega de conteúdo e pontos próximos ao usuário final.</span>
+      </div>
+    </div>
+    <p class="t-body" style="font-size:var(--fs-sm);color:var(--text-3);margin-top:16px;opacity:0;animation:rise 500ms 400ms var(--ease) forwards;">→ O resultado é uma experiência fluida com coordenação central para segurança e gerenciamento.</p>
+    <div class="slide-footer animate-children" style="margin-top:auto;">
+      <span>Exemplo 1 de 2</span><span>08 / 10</span>
+    </div>
+  </section>
+
+  <!-- 9 · IOT -->
+  <section class="slide" data-title="IoT">
+    <div class="animate-children">
+      <p class="eyebrow">Exemplo 2</p>
+      <h2 class="t-heading">IoT: cidade inteligente ou <strong>indústria</strong></h2>
+    </div>
+    <div class="tl-grid" style="margin-top:28px;">
+      <div class="tl-col">
+        <div class="tl-badge">01</div>
+        <div class="tl-rule"></div>
+        <p class="tl-text">Sensores coletam dados de máquinas, câmeras ou ambiente.</p>
+      </div>
+      <div class="tl-col">
+        <div class="tl-badge">02</div>
+        <div class="tl-rule"></div>
+        <p class="tl-text">Edge filtra, detecta eventos e toma decisões locais rápidas.</p>
+      </div>
+      <div class="tl-col">
+        <div class="tl-badge">03</div>
+        <div class="tl-rule"></div>
+        <p class="tl-text">Cloud armazena histórico, gera dashboards e treina modelos.</p>
+      </div>
+      <div class="tl-col">
+        <div class="tl-badge">04</div>
+        <div class="tl-rule"></div>
+        <p class="tl-text">Aplicações cliente mostram alertas e permitem intervenção humana.</p>
+      </div>
+    </div>
+    <div class="slide-footer animate-children" style="margin-top:auto;">
+      <span>Exemplo 2 de 2</span><span>09 / 10</span>
+    </div>
+  </section>
+
+  <!-- 10 · CONCLUSÃO -->
+  <section class="slide conclusion-slide" data-title="Conclusão">
+    <div class="ibm-bars"></div>
+    <div class="ibm-dots"></div>
+    <div style="position:relative;z-index:1;display:flex;flex-direction:column;height:100%;">
+      <div class="animate-children">
+        <p class="eyebrow">Conclusão</p>
+        <h2 class="t-heading">Síntese e considerações <strong>finais</strong></h2>
+      </div>
+      <div class="closing-grid" style="margin-top:28px;">
+        <div class="cl-col">
+          <span class="cl-num">01 · Combinar</span>
+          <div class="cl-title">É necessário</div>
+          <p>Nenhuma arquitetura isolada atende todos os requisitos de sistemas modernos — a combinação é a regra, não a exceção.</p>
+        </div>
+        <div class="cl-col">
+          <span class="cl-num">02 · Dividir</span>
+          <div class="cl-title">É o núcleo</div>
+          <p>Centralizar o que precisa de controle e escala, aproximar o que exige velocidade, distribuir o que ganha com colaboração direta.</p>
+        </div>
+        <div class="cl-col">
+          <span class="cl-num">03 · Projetar</span>
+          <div class="cl-title">Desde o início</div>
+          <p>Segurança, sincronização, observabilidade e manutenção em sistemas híbridos precisam ser considerados na arquitetura, não depois.</p>
+        </div>
+      </div>
+      <div class="final-line" style="opacity:0;animation:rise 600ms 360ms var(--ease) forwards;">
+        Obrigada! <strong>Perguntas?</strong>
+      </div>
+      <div class="slide-footer animate-children" style="margin-top:auto;">
+        <span>Arquiteturas Híbridas · Computação distribuída</span>
+        <span>10 / 10</span>
+      </div>
+    </div>
+  </section>
+
+</div><!-- /slides-area -->
+
+<!-- CONTROLS -->
+<nav class="controls" aria-label="Navegação dos slides">
+  <button class="ctrl-btn" id="prevBtn">← Anterior</button>
+  <div class="dots" id="dots" role="tablist"></div>
+  <button class="ctrl-btn" id="nextBtn">Próximo →</button>
+</nav>
+
+<!-- PROGRESS -->
+<div class="progress-rail">
+  <div class="progress-fill" id="progressFill" style="width:10%"></div>
+</div>
+
+</div><!-- /shell -->
+
+<script>
+const slides  = Array.from(document.querySelectorAll('.slide'));
+const dotsEl  = document.getElementById('dots');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const curEl   = document.getElementById('cur');
+const fillEl  = document.getElementById('progressFill');
+const N = slides.length;
+let idx = 0, busy = false;
+
+document.getElementById('tot').textContent = String(N).padStart(2,'0');
+
+slides.forEach((s,i) => {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i===0?' active':'');
+  d.setAttribute('role','tab');
+  d.setAttribute('aria-label', s.dataset.title || `Slide ${i+1}`);
+  d.addEventListener('click', () => go(i));
+  dotsEl.appendChild(d);
+});
+
+function pad(n) { return String(n+1).padStart(2,'0'); }
+
+function updateUI() {
+  curEl.textContent = pad(idx);
+  fillEl.style.width = `${((idx+1)/N)*100}%`;
+  Array.from(dotsEl.children).forEach((d,i) => d.classList.toggle('active', i===idx));
+  prevBtn.disabled = idx===0;
+  nextBtn.disabled = idx===N-1;
+}
+
+function go(next) {
+  if (busy || next===idx || next<0 || next>=N) return;
+  busy = true;
+  const dir = next > idx ? 1 : -1;
+  const leaving = slides[idx];
+  const entering = slides[next];
+
+  leaving.classList.remove('active');
+  leaving.classList.add(dir>0 ? 'leaving-fwd' : 'leaving-bwd');
+
+  if (dir>0) {
+    entering.classList.add('active');
+  } else {
+    entering.classList.add('entering-bwd');
+    requestAnimationFrame(() => {
+      entering.classList.remove('entering-bwd');
+      entering.classList.add('active');
+    });
+  }
+
+  idx = next;
+  updateUI();
+  setTimeout(() => { leaving.classList.remove('leaving-fwd','leaving-bwd'); busy=false; }, 320);
+}
+
+prevBtn.addEventListener('click', () => go(idx-1));
+nextBtn.addEventListener('click', () => go(idx+1));
+
+document.addEventListener('keydown', e => {
+  if (e.key==='ArrowRight'||e.key===' '||e.key==='PageDown') { e.preventDefault(); go(idx+1); }
+  if (e.key==='ArrowLeft' ||e.key==='PageUp')  { e.preventDefault(); go(idx-1); }
+  if (e.key==='Home') go(0);
+  if (e.key==='End')  go(N-1);
+});
+
+let tx=0;
+document.addEventListener('touchstart', e=>{ tx=e.changedTouches[0].screenX; },{passive:true});
+document.addEventListener('touchend',   e=>{
+  const dx=tx-e.changedTouches[0].screenX;
+  if(Math.abs(dx)>52) go(dx>0?idx+1:idx-1);
+},{passive:true});
+
+updateUI();
+</script>
+</body>
+</html>
