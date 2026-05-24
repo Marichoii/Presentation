@@ -97,6 +97,12 @@ body {
   grid-template-rows: 48px 1fr 52px 4px;
   overflow: hidden;
 }
+html:fullscreen .shell {
+  grid-template-rows:48px 1fr 4px;
+}
+html:fullscreen .controls {
+  display:none;
+}
 
 /* ── TOPBAR ─────────────────────────── */
 .topbar {
@@ -129,6 +135,14 @@ body {
 .brand-sep { width:1px; height:14px; background:var(--border); }
 .counter   { font-size:var(--fs-sm); font-weight:500; color:var(--text-3); letter-spacing:0.04em; }
 .counter b { color:var(--ibm); font-weight:600; }
+.top-actions { display:flex; align-items:center; gap:14px; }
+.top-actions .ctrl-btn {
+  height:30px;
+  min-width:34px;
+  padding:0 10px;
+  background:#fff;
+}
+.top-actions .counter { min-width:58px; text-align:right; }
 
 /* ── SLIDES AREA ────────────────────── */
 .slides-area { position:relative; overflow:hidden; min-height:0; }
@@ -398,12 +412,17 @@ body {
 }
 
 .cover-right {
-  background:var(--blue-90);
+  background:
+    linear-gradient(90deg, rgba(255,255,255,0.055) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(255,255,255,0.055) 1px, transparent 1px),
+    linear-gradient(135deg, var(--ceub-dark), var(--ceub-purple));
+  background-size:38px 38px, 38px 38px, 100% 100%;
   position:relative;
   overflow:hidden;
   display:flex;
   flex-direction:column;
   padding:clamp(34px, 5vh, 58px) clamp(28px, 4vw, 52px);
+  animation: cover-bg-shift 14s linear infinite;
 }
 .cover-right .ibm-bars, .cover-right .ibm-dots { display:block; }
 .cover-right-inner {
@@ -412,17 +431,6 @@ body {
   display:flex;
   flex-direction:column;
   height:100%;
-}
-.cover-big-num {
-  font-size:clamp(9rem,24vw,22rem);
-  font-weight:300;
-  line-height:1;
-  letter-spacing:-6px;
-  color:rgba(255,255,255,0.06);
-  position:absolute;
-  bottom:-0.08em; right:-0.04em;
-  user-select:none;
-  pointer-events:none;
 }
 .net-area {
   flex:1;
@@ -433,6 +441,55 @@ body {
   animation: fade-scale 520ms 260ms var(--ease) forwards;
 }
 .net-area svg { width:100%; max-width:380px; height:auto; overflow:visible; }
+.net-area .cover-map {
+  width:min(100%, 430px);
+  aspect-ratio:1.25;
+  position:relative;
+}
+.map-line {
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:34%;
+  height:1px;
+  background:linear-gradient(90deg, rgba(236,0,137,0.85), rgba(253,225,0,0.75));
+  transform-origin:left center;
+  opacity:0.55;
+}
+.map-line.l1 { transform:rotate(210deg); }
+.map-line.l2 { transform:rotate(330deg); }
+.map-line.l3 { transform:rotate(145deg); background:linear-gradient(90deg, rgba(236,0,137,0.85), rgba(191,0,135,0.75)); }
+.map-line.l4 { transform:rotate(35deg); background:linear-gradient(90deg, rgba(236,0,137,0.85), rgba(102,44,146,0.8)); }
+.map-line.l5 { transform:rotate(180deg); width:42%; opacity:0.22; }
+.map-line.l6 { transform:rotate(0deg); width:42%; opacity:0.22; background:rgba(253,225,0,0.55); }
+.map-node {
+  position:absolute;
+  width:92px;
+  height:92px;
+  border:3px solid var(--ceub-magenta);
+  background:rgba(67,5,78,0.8);
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:var(--fs-sm);
+  font-weight:700;
+  text-transform:uppercase;
+  transform:translate(-50%,-50%);
+}
+.map-node.hub {
+  left:50%;
+  top:50%;
+  width:86px;
+  height:62px;
+  border-radius:0;
+  color:#ffd2ed;
+}
+.map-node.client { left:18%; top:24%; }
+.map-node.cloud { left:82%; top:24%; border-color:var(--ceub-yellow); color:var(--ceub-yellow); }
+.map-node.edge { left:18%; top:76%; color:var(--ceub-magenta); }
+.map-node.p2p { left:82%; top:76%; border-color:var(--ceub-purple); color:#c584df; }
+.map-node:not(.hub) { border-radius:999px; }
 .cover-line {
   position:absolute;
   left:0;
@@ -447,6 +504,9 @@ body {
 @keyframes cover-line-in {
   from { opacity:0; transform:scaleX(0.4); }
   to { opacity:1; transform:scaleX(1); }
+}
+@keyframes cover-bg-shift {
+  to { background-position:76px 38px, 38px 76px, 0 0; }
 }
 
 .cover-chips {
@@ -540,13 +600,15 @@ body {
   background:var(--border);
   border:1px solid var(--border);
   flex:1;
+  min-height:0;
 }
 .block-card {
   background:var(--bg);
-  padding:32px 24px;
+  padding:clamp(26px, 3vw, 42px) clamp(20px, 2.6vw, 34px);
   display:flex;
   flex-direction:column;
-  gap:12px;
+  justify-content:space-between;
+  gap:18px;
   position:relative;
   overflow:hidden;
   cursor:default;
@@ -570,19 +632,30 @@ body {
 .bc-t .block-num  { color:var(--teal-50); }
 .bc-p .block-num  { color:var(--purple-60); }
 
-.block-icon { font-size:2.2rem; line-height:1; }
+.block-icon { font-size:clamp(3rem, 6vw, 5.8rem); line-height:1; opacity:0.95; }
 .bc-b .block-icon { color:var(--ibm); }
 .bc-c .block-icon { color:var(--cyan-40); }
 .bc-t .block-icon { color:var(--teal-40); }
 .bc-p .block-icon { color:var(--purple-50); }
 
 .block-card h3 {
-  font-size:var(--fs-md);
+  font-size:clamp(1.25rem, 2.2vw, 2rem);
   font-weight:600;
   color:var(--text);
   line-height:1.2;
 }
 .block-card p { font-size:var(--fs-sm); color:var(--text-2); line-height:1.65; }
+.block-card::after {
+  content:'';
+  position:absolute;
+  right:-26px;
+  bottom:-26px;
+  width:110px;
+  height:110px;
+  border:1px solid currentColor;
+  opacity:0.08;
+  transform:rotate(45deg);
+}
 
 /* card stagger with rise */
 .slide.active .four-grid .block-card:nth-child(1) { animation: rise 520ms  80ms var(--ease) forwards; opacity:0; transform:translateY(24px); }
@@ -691,8 +764,8 @@ body {
 .dev-accordion {
   margin-top:28px;
   display:grid;
-  grid-template-columns:repeat(3,minmax(0,1fr));
-  grid-template-rows:auto minmax(0,1fr);
+  grid-template-columns:minmax(240px, 0.32fr) minmax(0, 1fr);
+  grid-template-rows:repeat(3, auto) minmax(0, 1fr);
   gap:1px;
   background:var(--border);
   border:1px solid var(--border);
@@ -707,10 +780,11 @@ body {
   display:contents;
 }
 .dev-tab {
+  grid-column:1;
   appearance:none;
   border:0;
   background:#fff;
-  padding:18px;
+  padding:22px 20px;
   text-align:left;
   cursor:pointer;
   display:grid;
@@ -719,6 +793,7 @@ body {
   align-items:center;
   font-family:var(--sans);
   min-width:0;
+  min-height:92px;
 }
 .dev-tab:hover { background:var(--blue-10); }
 .dev-panel.is-open .dev-tab {
@@ -752,11 +827,23 @@ body {
 }
 .dev-content {
   display:none;
-  grid-column:1 / -1;
-  padding:24px;
+  grid-column:2;
+  grid-row:1 / -1;
+  padding:clamp(22px, 3vw, 34px);
   background:var(--layer-01);
   min-height:0;
   overflow:hidden;
+  position:relative;
+}
+.dev-content::before {
+  content:'';
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  background:
+    linear-gradient(90deg, rgba(236,0,137,0.055) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(67,5,78,0.055) 1px, transparent 1px);
+  background-size:32px 32px;
 }
 .dev-panel.is-open .dev-content {
   display:flex;
@@ -764,23 +851,75 @@ body {
   gap:18px;
   animation: fade-scale 260ms var(--ease) forwards;
 }
-.dev-panel .flow-row {
-  margin:0;
-  animation:none;
-  opacity:1;
+.dev-content > * { position:relative; z-index:1; }
+.dev-card-grid {
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:14px;
 }
-.dev-panel .info-box,
-.dev-panel .diagram-box,
-.dev-panel .col-text {
-  animation:none;
-  opacity:1;
+.dev-card {
+  background:#fff;
+  border:1px solid var(--border);
+  min-height:150px;
+  padding:22px;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  position:relative;
 }
-.dev-panel .diagram-box {
-  min-height:210px;
+.dev-card::before {
+  content:'';
+  position:absolute;
+  top:0;
+  left:0;
+  width:12px;
+  height:12px;
+  border-top:2px solid var(--ibm);
+  border-left:2px solid var(--ibm);
 }
+.dev-card .t-label { color:var(--text-3); }
+.dev-card strong {
+  display:block;
+  margin-top:12px;
+  color:var(--text);
+  font-size:clamp(1.05rem, 1.7vw, 1.45rem);
+  line-height:1.2;
+}
+.dev-summary {
+  background:#fff;
+  border:1px solid var(--border);
+  border-left:4px solid var(--ibm);
+  padding:22px;
+}
+.dev-summary h3 {
+  font-size:clamp(1.25rem, 2vw, 1.7rem);
+  color:var(--text);
+  margin-bottom:10px;
+}
+.dev-summary p { color:var(--text-2); font-size:var(--fs-md); line-height:1.45; }
+.dev-summary .chips { margin-top:18px; }
+.dev-diagram-card {
+  background:#fff;
+  border:1px solid var(--border);
+  padding:22px;
+  min-height:320px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.dev-text-card {
+  background:#fff;
+  border:1px solid var(--border);
+  border-left:4px solid var(--ibm);
+  padding:26px;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+}
+.dev-text-card .t-body:first-child { margin-top:0 !important; }
 .dev-panel .two-col {
-  gap:20px;
-  flex:0;
+  gap:clamp(20px, 3vw, 36px);
+  flex:1;
 }
 
 /* ═══════════════════════════════════════════
@@ -796,9 +935,10 @@ body {
 }
 .tc {
   background:var(--bg);
-  padding:32px 24px;
+  padding:clamp(28px, 3vw, 44px) clamp(22px, 3vw, 36px);
   display:flex;
   flex-direction:column;
+  justify-content:space-between;
   position:relative;
   overflow:hidden;
   transition:background 180ms ease;
@@ -815,11 +955,11 @@ body {
 .tc-s .tc-lbl { color:var(--green-50); }
 .tc-w .tc-lbl { color:#7d4e17; }
 .tc-i .tc-lbl { color:var(--ibm); }
-.tc p { font-size:var(--fs-sm); line-height:1.7; color:var(--text-2); }
+.tc p { font-size:clamp(18px, 1.7vw, 26px); line-height:1.35; color:var(--text); max-width:420px; }
 .tc-wm {
   position:absolute; bottom:8px; right:12px;
-  font-size:5.5rem; font-weight:700; line-height:1;
-  opacity:0.05; user-select:none; pointer-events:none;
+  font-size:clamp(8rem, 14vw, 15rem); font-weight:700; line-height:1;
+  opacity:0.06; user-select:none; pointer-events:none;
 }
 .tc-s .tc-wm { color:var(--green-40); }
 .tc-w .tc-wm { color:var(--yellow-30); }
@@ -842,12 +982,14 @@ body {
 }
 .ex-card {
   background:var(--bg);
-  padding:24px 20px;
+  padding:clamp(24px, 3vw, 42px) clamp(20px, 2.6vw, 34px);
   display:flex;
   flex-direction:column;
-  gap:10px;
+  justify-content:space-between;
+  gap:18px;
   position:relative;
   transition:background 180ms;
+  overflow:hidden;
 }
 .ex-card:hover { background:var(--layer-01); }
 .ex-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; }
@@ -860,8 +1002,19 @@ body {
 .ex-card:nth-child(2) .ex-tag { color:var(--cyan-50); }
 .ex-card:nth-child(3) .ex-tag { color:var(--purple-60); }
 .ex-card:nth-child(4) .ex-tag { color:var(--teal-50); }
-.ex-title { font-size:var(--fs-md); font-weight:600; color:var(--text); line-height:1.25; }
+.ex-title { font-size:clamp(1.2rem, 2vw, 1.8rem); font-weight:600; color:var(--text); line-height:1.25; }
 .ex-desc  { font-size:var(--fs-sm); color:var(--text-2); line-height:1.65; }
+.ex-card::after {
+  content:'';
+  width:86px;
+  height:86px;
+  border:1px solid currentColor;
+  opacity:0.09;
+  position:absolute;
+  right:-24px;
+  bottom:-24px;
+  transform:rotate(45deg);
+}
 
 .slide.active .ex-grid .ex-card:nth-child(1) { animation:rise 500ms  60ms var(--ease) forwards; opacity:0; transform:translateY(24px); }
 .slide.active .ex-grid .ex-card:nth-child(2) { animation:rise 500ms 140ms var(--ease) forwards; opacity:0; transform:translateY(24px); }
@@ -881,12 +1034,14 @@ body {
 }
 .tl-col {
   background:var(--bg);
-  padding:28px 20px;
+  padding:clamp(26px, 3vw, 44px) clamp(20px, 3vw, 34px);
   display:flex;
   flex-direction:column;
-  gap:16px;
+  justify-content:space-between;
+  gap:20px;
   position:relative;
   transition:background 180ms;
+  overflow:hidden;
 }
 .tl-col:hover { background:var(--layer-01); }
 .tl-badge {
@@ -904,27 +1059,64 @@ body {
 .tl-col:nth-child(4) .tl-badge { border-color:var(--purple-50); color:var(--purple-60); }
 .tl-col:nth-child(4):hover .tl-badge { background:#f6f2ff; }
 
-.tl-rule { height:3px; width:0; background:var(--ibm); }
+.tl-rule {
+  height:3px;
+  width:calc(100% - clamp(40px, 6vw, 76px));
+  background:var(--ibm);
+  transform:scaleX(0);
+  transform-origin:left center;
+  margin:auto 0;
+}
 .tl-col:nth-child(2) .tl-rule { background:var(--cyan-40); }
 .tl-col:nth-child(3) .tl-rule { background:var(--teal-40); }
 .tl-col:nth-child(4) .tl-rule { background:var(--purple-50); }
 
-.slide.active .tl-col:nth-child(1) .tl-rule { animation: bar-expand 700ms  400ms var(--ease) forwards; }
-.slide.active .tl-col:nth-child(2) .tl-rule { animation: bar-expand 700ms  560ms var(--ease) forwards; }
-.slide.active .tl-col:nth-child(3) .tl-rule { animation: bar-expand 700ms  720ms var(--ease) forwards; }
-.slide.active .tl-col:nth-child(4) .tl-rule { animation: bar-expand 700ms  880ms var(--ease) forwards; }
+.tl-col.is-shown .tl-rule { transform:scaleX(1); transition:transform 620ms var(--ease) 120ms; }
 
-.tl-text { font-size:var(--fs-sm); line-height:1.65; color:var(--text); }
+.tl-text { font-size:clamp(1.1rem, 1.8vw, 1.7rem); line-height:1.25; color:var(--text); }
+.tl-col::after {
+  content:attr(data-step);
+  position:absolute;
+  right:12px;
+  bottom:-0.08em;
+  font-size:clamp(5rem, 11vw, 11rem);
+  line-height:1;
+  font-weight:700;
+  color:var(--text);
+  opacity:0.045;
+}
 
 .slide.active .tl-grid .tl-col:nth-child(1) { animation:rise 500ms  80ms var(--ease) forwards; opacity:0; transform:translateY(24px); }
 .slide.active .tl-grid .tl-col:nth-child(2) { animation:rise 500ms 160ms var(--ease) forwards; opacity:0; transform:translateY(24px); }
 .slide.active .tl-grid .tl-col:nth-child(3) { animation:rise 500ms 240ms var(--ease) forwards; opacity:0; transform:translateY(24px); }
 .slide.active .tl-grid .tl-col:nth-child(4) { animation:rise 500ms 320ms var(--ease) forwards; opacity:0; transform:translateY(24px); }
 
+.action-item {
+  opacity:0 !important;
+  transform:translateY(18px) !important;
+  transition:opacity 260ms var(--ease), transform 260ms var(--ease);
+  animation:none !important;
+}
+.action-item.is-shown {
+  opacity:1 !important;
+  transform:translateY(0) !important;
+}
+
 /* ═══════════════════════════════════════════
    SLIDE 10 · CONCLUSÃO (blue)
 ═══════════════════════════════════════════ */
 .conclusion-slide { background:var(--blue-90) !important; }
+.conclusion-slide::before {
+  content:'';
+  position:absolute;
+  inset:0;
+  background:
+    linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+  background-size:42px 42px;
+  opacity:0.7;
+  pointer-events:none;
+}
 .conclusion-slide .eyebrow { color:var(--blue-30); }
 .conclusion-slide .eyebrow::before { background:var(--blue-30); }
 .conclusion-slide .t-heading { color:#fff; }
@@ -936,17 +1128,19 @@ body {
   display:grid;
   grid-template-columns:repeat(3,1fr);
   gap:1px;
-  background:rgba(255,255,255,0.08);
-  border:1px solid rgba(255,255,255,0.08);
+  background:rgba(255,255,255,0.12);
+  border:1px solid rgba(255,255,255,0.12);
   flex:1;
+  min-height:0;
   margin-bottom:28px;
 }
 .cl-col {
   background:var(--blue-90);
-  padding:28px 24px;
+  padding:clamp(28px, 3vw, 46px);
   display:flex;
   flex-direction:column;
-  gap:12px;
+  justify-content:space-between;
+  gap:18px;
   position:relative;
   overflow:hidden;
   transition:background 200ms;
@@ -957,8 +1151,19 @@ body {
 .cl-col:nth-child(2)::after { background:var(--cyan-40); }
 .cl-col:nth-child(3)::after { background:var(--teal-40); }
 .cl-num { font-size:var(--fs-sm); font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:var(--blue-30); }
-.cl-title { font-size:var(--fs-md); font-weight:600; color:#fff; line-height:1.2; }
-.cl-col p { font-size:var(--fs-sm); line-height:1.7; color:var(--blue-20); }
+.cl-title { font-size:clamp(1.4rem, 2.3vw, 2.2rem); font-weight:600; color:#fff; line-height:1.2; }
+.cl-col p { font-size:clamp(1rem, 1.5vw, 1.25rem); line-height:1.45; color:var(--blue-20); max-width:320px; }
+.cl-col::before {
+  content:attr(data-mark);
+  position:absolute;
+  right:14px;
+  bottom:-0.1em;
+  font-size:clamp(6rem, 12vw, 12rem);
+  font-weight:700;
+  line-height:1;
+  color:#fff;
+  opacity:0.045;
+}
 
 .slide.active .closing-grid .cl-col:nth-child(1) { animation:rise 500ms  80ms var(--ease) forwards; opacity:0; transform:translateY(24px); }
 .slide.active .closing-grid .cl-col:nth-child(2) { animation:rise 500ms 160ms var(--ease) forwards; opacity:0; transform:translateY(24px); }
@@ -1001,8 +1206,13 @@ body {
   cursor:pointer;
   transition:background 150ms, border-color 150ms, color 150ms, box-shadow 150ms;
 }
-.ctrl-btn:hover:not(:disabled) { background:var(--ibm); border-color:var(--ibm); color:#fff; box-shadow: 0 2px 8px rgba(15,98,254,0.25); }
-.ctrl-btn:focus-visible { outline:2px solid var(--ibm); outline-offset:2px; }
+  .ctrl-btn:hover:not(:disabled) { background:var(--ibm); border-color:var(--ibm); color:#fff; box-shadow: 0 2px 8px rgba(15,98,254,0.25); }
+  .ctrl-btn:focus-visible { outline:2px solid var(--ibm); outline-offset:2px; }
+.ctrl-btn.icon-btn {
+  width:42px;
+  padding:0;
+  font-size:18px;
+}
 .ctrl-btn:disabled { opacity:0.25; cursor:not-allowed; }
 
 .dots { display:flex; align-items:center; gap:6px; }
@@ -1070,9 +1280,12 @@ body {
   .dev-accordion { grid-template-columns:1fr; overflow:visible; }
   .dev-panel { display:flex; flex-direction:column; }
   .dev-content { grid-column:auto; }
+  .dev-tab { min-height:auto; }
   .dev-content { overflow:visible; }
+  .dev-card-grid { grid-template-columns:1fr; }
   body { overflow:auto; }
   .shell { height:auto; min-height:100vh; grid-template-rows:48px 1fr 52px 4px; }
+  html:fullscreen .shell { grid-template-rows:48px 1fr 4px; }
   .slides-area { min-height:clamp(480px, 80vh, 720px); }
   .slide { position:relative; }
   .slide:not(.active) { display:none !important; }
@@ -1131,7 +1344,10 @@ body {
     <span class="brand-sep"></span>
     <span>Seminário · Arquitetura e Sistemas Distribuídos</span>
   </div>
-  <div class="counter"><b id="cur">01</b>/<span id="tot">10</span></div>
+  <div class="top-actions">
+    <button class="ctrl-btn icon-btn" id="fullBtn" title="Tela cheia" aria-label="Tela cheia">⛶</button>
+    <div class="counter"><b id="cur">01</b>/<span id="tot">10</span></div>
+  </div>
 </header>
 
 <!-- SLIDES -->
@@ -1142,10 +1358,10 @@ body {
     <div class="cover-left">
       <p class="eyebrow">Sistemas Distribuídos</p>
       <h1 class="t-heading">Arquiteturas<br/><strong>Híbridas</strong></h1>
-      <div class="cover-note">Cliente-servidor · P2P · Edge · Cloud</div>
+      <p class="t-body">Como combinar cliente-servidor, P2P, Edge e Cloud para construir sistemas distribuídos modernos.</p>
       <div class="cover-team">
-        <span class="cover-person">Maria Eduarda</span>
-        <span class="cover-person">Matheus Musashi</span>
+        <span class="cover-person">Maria Eduarda Eguchi</span>
+        <span class="cover-person">Matheus Musashi </span>
         <span class="cover-person">Kaike Vitorino</span>
         <span class="cover-person">Livia Lemos</span>
       </div>
@@ -1155,36 +1371,51 @@ body {
       <div class="ibm-dots"></div>
       <div class="cover-line one"></div>
       <div class="cover-line two"></div>
-      <div class="cover-big-num">H</div>
       <div class="cover-right-inner">
         <div class="net-area">
-          <svg viewBox="0 0 340 260" aria-hidden="true">
-            <!-- connections - dashed animated -->
-            <line class="dash-flow" x1="60" y1="65" x2="170" y2="130" stroke="rgba(236,0,137,0.45)" stroke-width="1.5" fill="none"/>
-            <line class="dash-flow" x1="280" y1="65" x2="170" y2="130" stroke="rgba(253,225,0,0.42)" stroke-width="1.5" fill="none" style="animation-delay:-3s"/>
-            <line class="dash-flow" x1="70" y1="205" x2="170" y2="130" stroke="rgba(191,0,135,0.42)" stroke-width="1.5" fill="none" style="animation-delay:-5s"/>
-            <line class="dash-flow" x1="275" y1="200" x2="170" y2="130" stroke="rgba(102,44,146,0.42)" stroke-width="1.5" fill="none" style="animation-delay:-1.5s"/>
-            <line class="dash-flow" x1="60" y1="65" x2="70" y2="205" stroke="rgba(236,0,137,0.22)" stroke-width="1" fill="none" style="animation-delay:-4s"/>
-            <line class="dash-flow" x1="280" y1="65" x2="275" y2="200" stroke="rgba(253,225,0,0.24)" stroke-width="1" fill="none" style="animation-delay:-2s"/>
-            <!-- hub -->
-            <rect x="143" y="108" width="54" height="44" fill="rgba(236,0,137,0.16)" stroke="#ec0089" stroke-width="1.5"/>
-            <text x="170" y="134" text-anchor="middle" font-family="dT Jakob, sans-serif" font-size="10" font-weight="600" fill="#ffb3de" letter-spacing="0.5">HUB</text>
-            <!-- nodes -->
-            <circle cx="60" cy="65" r="24" fill="rgba(67,5,78,0.92)" stroke="#ec0089" stroke-width="2"/>
-            <text x="60" y="69" text-anchor="middle" font-family="dT Jakob, sans-serif" font-size="9" font-weight="600" fill="#ffb3de">CLIENTE</text>
-            <circle cx="280" cy="65" r="24" fill="rgba(67,5,78,0.92)" stroke="#fde100" stroke-width="2"/>
-            <text x="280" y="69" text-anchor="middle" font-family="dT Jakob, sans-serif" font-size="9" font-weight="600" fill="#fde100">CLOUD</text>
-            <circle cx="70" cy="205" r="24" fill="rgba(67,5,78,0.92)" stroke="#bf0087" stroke-width="2"/>
-            <text x="70" y="209" text-anchor="middle" font-family="dT Jakob, sans-serif" font-size="9" font-weight="600" fill="#bf0087">EDGE</text>
-            <circle cx="275" cy="200" r="24" fill="rgba(67,5,78,0.92)" stroke="#662c92" stroke-width="2"/>
-            <text x="275" y="204" text-anchor="middle" font-family="dT Jakob, sans-serif" font-size="9" font-weight="600" fill="#662c92">P2P</text>
-          </svg>
-        </div>
-        <div class="cover-chips">
-          <div class="cover-chip"><span class="t-label">camadas</span><span class="val">4</span></div>
-          <div class="cover-chip"><span class="t-label">slides</span><span class="val">7</span></div>
+          <div class="cover-map" aria-hidden="true">
+            <span class="map-line l1"></span>
+            <span class="map-line l2"></span>
+            <span class="map-line l3"></span>
+            <span class="map-line l4"></span>
+            <span class="map-line l5"></span>
+            <span class="map-line l6"></span>
+            <span class="map-node hub">Hub</span>
+            <span class="map-node client">Cliente</span>
+            <span class="map-node cloud">Cloud</span>
+            <span class="map-node edge">Edge</span>
+            <span class="map-node p2p">P2P</span>
+          </div>
         </div>
       </div>
+    </div>
+  </section>
+
+  <!-- 2 · INTRODUÇÃO -->
+  <section class="slide" data-title="Introdução">
+    <div class="animate-children">
+      <p class="eyebrow">Contexto</p>
+      <h2 class="t-heading">Por que <strong>combinar</strong> modelos?</h2>
+    </div>
+    <div class="intro-layout" style="margin-top:28px;">
+      <div class="animate-children">
+        <p class="t-body">Sistemas modernos raramente cabem em um único modelo arquitetural. Latência, escala, privacidade e custo exigem abordagens híbridas.</p>
+        <ul class="clean-list" style="margin-top:20px;">
+          <li>Latência baixa pede processamento próximo ao usuário.</li>
+          <li>Alta escala exige infraestrutura elástica na nuvem.</li>
+          <li>Privacidade e custo pedem controle local dos dados.</li>
+          <li>Resiliência vem da descentralização P2P.</li>
+        </ul>
+      </div>
+      <div class="quote-panel">
+        <div class="ibm-bars"></div>
+        <span class="q-label">Princípio</span>
+        <blockquote>"Uma arquitetura híbrida une o melhor de cada modelo: velocidade no edge, escala na cloud, resiliência no P2P."</blockquote>
+        <span class="quote-mark">"</span>
+      </div>
+    </div>
+    <div class="slide-footer animate-children" style="margin-top:auto;">
+      <span>Introdução</span><span>02 / 08</span>
     </div>
   </section>
 
@@ -1195,25 +1426,25 @@ body {
       <h2 class="t-heading">Os <strong>quatro blocos</strong> principais</h2>
     </div>
     <div class="four-grid" style="margin-top:28px;">
-      <article class="block-card bc-b">
+      <article class="block-card bc-b action-item">
         <span class="block-num">01 / 04</span>
         <div class="block-icon">⇌</div>
         <h3>Cliente-servidor</h3>
         <p>Cliente solicita. Servidor processa e responde.</p>
       </article>
-      <article class="block-card bc-c">
+      <article class="block-card bc-c action-item">
         <span class="block-num">02 / 04</span>
         <div class="block-icon">⬡</div>
         <h3>P2P</h3>
         <p>Dispositivos trocam dados diretamente.</p>
       </article>
-      <article class="block-card bc-t">
+      <article class="block-card bc-t action-item">
         <span class="block-num">03 / 04</span>
         <div class="block-icon">◈</div>
         <h3>Edge</h3>
         <p>Processamento perto do usuário ou sensor.</p>
       </article>
-      <article class="block-card bc-p">
+      <article class="block-card bc-p action-item">
         <span class="block-num">04 / 04</span>
         <div class="block-icon">☁</div>
         <h3>Cloud</h3>
@@ -1221,7 +1452,7 @@ body {
       </article>
     </div>
     <div class="slide-footer animate-children" style="margin-top:auto;">
-      <span>Conceitos-base</span><span>02 / 07</span>
+      <span>Conceitos-base</span><span>03 / 08</span>
     </div>
   </section>
 
@@ -1238,27 +1469,21 @@ body {
           <span class="dev-tab-title">Cliente-servidor + cloud</span>
         </button>
         <div class="dev-content">
-          <div class="flow-row">
-            <div class="flow-node">
+          <div class="dev-card-grid">
+            <div class="dev-card">
               <span class="t-label">apresentação</span>
-              <span class="t-body">Aplicativo / Navegador</span>
+              <strong>Aplicativo / Navegador</strong>
             </div>
-            <div class="flow-arrow">
-              <svg viewBox="0 0 18 18" fill="none"><path d="M2 9H16M11 4L16 9L11 14" stroke="#6f6f6f" stroke-width="1.5" stroke-linecap="square"/></svg>
-            </div>
-            <div class="flow-node">
+            <div class="dev-card">
               <span class="t-label">lógica de negócio</span>
-              <span class="t-body">API / Backend</span>
+              <strong>API / Backend</strong>
             </div>
-            <div class="flow-arrow">
-              <svg viewBox="0 0 18 18" fill="none"><path d="M2 9H16M11 4L16 9L11 14" stroke="#6f6f6f" stroke-width="1.5" stroke-linecap="square"/></svg>
-            </div>
-            <div class="flow-node">
+            <div class="dev-card">
               <span class="t-label">persistência &amp; serviços</span>
-              <span class="t-body">Banco · Filas · IA · Storage</span>
+              <strong>Banco · Filas · IA · Storage</strong>
             </div>
           </div>
-          <div class="info-box">
+          <div class="dev-summary">
             <h3>Quando faz sentido?</h3>
             <p>Boa para controle central, escala e manutenção simples.</p>
             <div class="chips">
@@ -1277,7 +1502,7 @@ body {
         </button>
         <div class="dev-content">
           <div class="two-col">
-            <div class="diagram-box">
+            <div class="dev-diagram-card">
               <svg viewBox="0 0 280 230" aria-hidden="true">
                 <line class="dash-flow" x1="55" y1="55" x2="140" y2="115" stroke="var(--gray-30)" stroke-width="1.5" fill="none"/>
                 <line class="dash-flow" x1="225" y1="55" x2="140" y2="115" stroke="var(--gray-30)" stroke-width="1.5" fill="none" style="animation-delay:-3s"/>
@@ -1297,7 +1522,7 @@ body {
                 <text x="140" y="119" text-anchor="middle" font-family="dT Jakob, sans-serif" font-size="9" font-weight="600" fill="var(--ibm)" letter-spacing="0.5">SERVIDOR</text>
               </svg>
             </div>
-            <div class="col-text">
+            <div class="dev-text-card">
               <p class="t-body" style="font-size:var(--fs-md);color:var(--text);font-weight:400;margin-bottom:16px;">Servidor coordena. Pares trocam dados.</p>
               <p class="t-body">Menos carga central, mais cuidado com segurança e conexão.</p>
             </div>
@@ -1311,7 +1536,7 @@ body {
         </button>
         <div class="dev-content">
           <div class="two-col">
-            <div class="diagram-box">
+            <div class="dev-diagram-card">
               <svg viewBox="0 0 300 220" aria-hidden="true">
                 <line class="dash-flow" x1="68" y1="175" x2="150" y2="108" stroke="var(--teal-40)" stroke-width="1.5" fill="none"/>
                 <line class="dash-flow" x1="150" y1="108" x2="255" y2="58" stroke="var(--ibm)" stroke-width="1.5" fill="none" style="animation-delay:-2s"/>
@@ -1326,7 +1551,7 @@ body {
                 <text x="255" y="73" text-anchor="middle" font-family="dT Jakob, sans-serif" font-size="8" fill="var(--text-3)">histórico · IA</text>
               </svg>
             </div>
-            <div class="col-text">
+            <div class="dev-text-card">
               <p class="t-body" style="font-size:var(--fs-md);color:var(--text);font-weight:400;margin-bottom:20px;">Edge decide rápido. Cloud guarda e coordena.</p>
               <ul class="clean-list">
                 <li>Menor latência.</li>
@@ -1339,7 +1564,7 @@ body {
       </article>
     </div>
     <div class="slide-footer animate-children" style="margin-top:auto;">
-      <span>Desenvolvimento · 3 combinações</span><span>03 / 07</span>
+      <span>Desenvolvimento · 3 combinações</span><span>04 / 08</span>
     </div>
   </section>
 
@@ -1350,24 +1575,24 @@ body {
       <h2 class="t-heading">O que melhora e o que <strong>complica</strong>?</h2>
     </div>
     <div class="tradeoff-grid" style="margin-top:28px;">
-      <div class="tc tc-s">
+      <div class="tc tc-s action-item">
         <span class="tc-lbl">Benefícios</span>
         <p>Menor latência, mais resiliência e melhor uso de recursos.</p>
         <span class="tc-wm">+</span>
       </div>
-      <div class="tc tc-w">
+      <div class="tc tc-w action-item">
         <span class="tc-lbl">Custos</span>
         <p>Mais camadas, mais sincronização e mais pontos de segurança.</p>
         <span class="tc-wm">−</span>
       </div>
-      <div class="tc tc-i">
+      <div class="tc tc-i action-item">
         <span class="tc-lbl">Como decidir?</span>
         <p>Decida por latência, custo, privacidade, escala e manutenção.</p>
         <span class="tc-wm">?</span>
       </div>
     </div>
     <div class="slide-footer animate-children" style="margin-top:auto;">
-      <span>Análise de trade-offs</span><span>04 / 07</span>
+      <span>Análise de trade-offs</span><span>05 / 08</span>
     </div>
   </section>
 
@@ -1378,29 +1603,29 @@ body {
       <h2 class="t-heading">Videoconferência em <strong>tempo real</strong></h2>
     </div>
     <div class="ex-grid" style="margin-top:28px;">
-      <div class="ex-card">
+      <div class="ex-card action-item">
         <span class="ex-tag">Cloud</span>
         <span class="ex-title">Persistência global</span>
         <span class="ex-desc">Login, gravações e permissões.</span>
       </div>
-      <div class="ex-card">
+      <div class="ex-card action-item">
         <span class="ex-tag">Servidor</span>
         <span class="ex-title">Coordenação de sessão</span>
         <span class="ex-desc">Salas, presença e controle.</span>
       </div>
-      <div class="ex-card">
+      <div class="ex-card action-item">
         <span class="ex-tag">P2P / Media server</span>
         <span class="ex-title">Mídia em tempo real</span>
         <span class="ex-desc">Áudio e vídeo em baixa latência.</span>
       </div>
-      <div class="ex-card">
+      <div class="ex-card action-item">
         <span class="ex-tag">Edge / CDN</span>
         <span class="ex-title">Proximidade ao usuário</span>
         <span class="ex-desc">Entrega próxima ao usuário.</span>
       </div>
     </div>
     <div class="slide-footer animate-children" style="margin-top:auto;">
-      <span>Exemplo 1 de 2</span><span>05 / 07</span>
+      <span>Exemplo 1 de 2</span><span>06 / 08</span>
     </div>
   </section>
 
@@ -1411,29 +1636,29 @@ body {
       <h2 class="t-heading">IoT: cidade inteligente ou <strong>indústria</strong></h2>
     </div>
     <div class="tl-grid" style="margin-top:28px;">
-      <div class="tl-col">
+      <div class="tl-col action-item" data-step="01">
         <div class="tl-badge">01</div>
         <div class="tl-rule"></div>
         <p class="tl-text">Sensores coletam dados.</p>
       </div>
-      <div class="tl-col">
+      <div class="tl-col action-item" data-step="02">
         <div class="tl-badge">02</div>
         <div class="tl-rule"></div>
         <p class="tl-text">Edge filtra e decide.</p>
       </div>
-      <div class="tl-col">
+      <div class="tl-col action-item" data-step="03">
         <div class="tl-badge">03</div>
         <div class="tl-rule"></div>
         <p class="tl-text">Cloud guarda e aprende.</p>
       </div>
-      <div class="tl-col">
+      <div class="tl-col action-item" data-step="04">
         <div class="tl-badge">04</div>
         <div class="tl-rule"></div>
         <p class="tl-text">Apps mostram alertas.</p>
       </div>
     </div>
     <div class="slide-footer animate-children" style="margin-top:auto;">
-      <span>Exemplo 2 de 2</span><span>06 / 07</span>
+      <span>Exemplo 2 de 2</span><span>07 / 08</span>
     </div>
   </section>
 
@@ -1447,17 +1672,17 @@ body {
         <h2 class="t-heading">Síntese e considerações <strong>finais</strong></h2>
       </div>
       <div class="closing-grid" style="margin-top:28px;">
-        <div class="cl-col">
+        <div class="cl-col" data-mark="01">
           <span class="cl-num">01 · Combinar</span>
           <div class="cl-title">É necessário</div>
           <p>Combinar modelos virou regra.</p>
         </div>
-        <div class="cl-col">
+        <div class="cl-col" data-mark="02">
           <span class="cl-num">02 · Dividir</span>
           <div class="cl-title">É o núcleo</div>
           <p>Controle no centro. Velocidade perto.</p>
         </div>
-        <div class="cl-col">
+        <div class="cl-col" data-mark="03">
           <span class="cl-num">03 · Projetar</span>
           <div class="cl-title">Desde o início</div>
           <p>Segurança e manutenção entram desde o início.</p>
@@ -1468,7 +1693,7 @@ body {
       </div>
       <div class="slide-footer animate-children" style="margin-top:auto;">
         <span>Arquiteturas Híbridas · Computação distribuída</span>
-        <span>07 / 07</span>
+        <span>08 / 08</span>
       </div>
     </div>
   </section>
@@ -1494,6 +1719,7 @@ const slides  = Array.from(document.querySelectorAll('.slide'));
 const dotsEl  = document.getElementById('dots');
 const prevBtn = document.getElementById('prevBtn');
 const nextBtn = document.getElementById('nextBtn');
+const fullBtn = document.getElementById('fullBtn');
 const curEl   = document.getElementById('cur');
 const fillEl  = document.getElementById('progressFill');
 const N = slides.length;
@@ -1527,16 +1753,48 @@ document.querySelectorAll('[data-dev-accordion]').forEach(accordion => {
 
 function pad(n) { return String(n+1).padStart(2,'0'); }
 
+function resetSlideActions(slide) {
+  slide.querySelectorAll('.action-item').forEach(item => item.classList.remove('is-shown'));
+}
+
+function showInitialActions(slide) {
+  const first = slide.querySelector('.action-item');
+  if (first) first.classList.add('is-shown');
+}
+
+function advanceSlideAction() {
+  const slide = slides[idx];
+  const dev = slide.querySelector('[data-dev-accordion]');
+  if (dev) {
+    const panels = Array.from(dev.querySelectorAll('.dev-panel'));
+    const openIndex = panels.findIndex(panel => panel.classList.contains('is-open'));
+    if (openIndex > -1 && openIndex < panels.length - 1) {
+      panels[openIndex + 1].querySelector('.dev-tab').click();
+      return true;
+    }
+  }
+
+  const nextAction = Array.from(slide.querySelectorAll('.action-item')).find(item => !item.classList.contains('is-shown'));
+  if (nextAction) {
+    nextAction.classList.add('is-shown');
+    return true;
+  }
+
+  return false;
+}
+
 function updateUI() {
   curEl.textContent = pad(idx);
   fillEl.style.width = `${((idx+1)/N)*100}%`;
   Array.from(dotsEl.children).forEach((d,i) => d.classList.toggle('active', i===idx));
-  prevBtn.disabled = idx===0;
-  nextBtn.disabled = idx===N-1;
+  prevBtn.disabled = false;
+  nextBtn.disabled = false;
 }
 
 function go(next) {
-  if (busy || next===idx || next<0 || next>=N) return;
+  if (busy) return;
+  next = (next + N) % N;
+  if (next===idx) return;
   busy = true;
   const dir = next > idx ? 1 : -1;
   const leaving = slides[idx];
@@ -1557,17 +1815,31 @@ function go(next) {
 
   idx = next;
   updateUI();
+  resetSlideActions(entering);
+  setTimeout(() => showInitialActions(entering), 120);
   setTimeout(() => { leaving.classList.remove('leaving-fwd','leaving-bwd'); busy=false; }, 320);
 }
 
 prevBtn.addEventListener('click', () => go(idx-1));
 nextBtn.addEventListener('click', () => go(idx+1));
+fullBtn.addEventListener('click', async () => {
+  if (!document.fullscreenElement) {
+    await document.documentElement.requestFullscreen();
+  } else {
+    await document.exitFullscreen();
+  }
+});
 
 document.addEventListener('keydown', e => {
-  if (e.key==='ArrowRight'||e.key===' '||e.key==='PageDown') { e.preventDefault(); go(idx+1); }
+  if (e.key==='ArrowRight'||e.key==='PageDown') { e.preventDefault(); go(idx+1); }
+  if (e.key===' ') {
+    e.preventDefault();
+    if (!advanceSlideAction()) go(idx+1);
+  }
   if (e.key==='ArrowLeft' ||e.key==='PageUp')  { e.preventDefault(); go(idx-1); }
   if (e.key==='Home') go(0);
   if (e.key==='End')  go(N-1);
+  if (e.key.toLowerCase()==='f') fullBtn.click();
 });
 
 let tx=0;
@@ -1578,6 +1850,7 @@ document.addEventListener('touchend',   e=>{
 },{passive:true});
 
 updateUI();
+showInitialActions(slides[idx]);
 </script>
 </body>
 </html>
