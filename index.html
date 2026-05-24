@@ -6,7 +6,7 @@
 <title>Arquiteturas Híbridas · IBM</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Serif:ital,wght@0,300;0,400;0,600;1,300;1,400;1,600&display=swap" rel="stylesheet"/>
 <style>
 /* ═══════════════════════════════════════════
    TOKENS — IBM Carbon v11 White theme
@@ -222,7 +222,7 @@ body {
   line-height: 1.0;
   letter-spacing: -0.02em;
 }
-.t-heading strong { font-weight: 600; color: var(--ibm); }
+.t-heading strong { font-family: 'IBM Plex Serif', Georgia, serif; font-weight: 600; font-style: italic; color: var(--ibm); }
 
 /* eyebrow — uses label size */
 .eyebrow {
@@ -565,23 +565,25 @@ body {
 ═══════════════════════════════════════════ */
 .two-col {
   display:grid;
-  grid-template-columns:0.85fr 1.15fr;
+  grid-template-columns:1fr 1fr;
   gap:32px;
-  align-items:center;
+  align-items:stretch;
   flex:1;
+  min-height:0;
 }
 .diagram-box {
   background:var(--layer-01);
   border:1px solid var(--border);
-  height:100%;
-  min-height:240px;
+  flex:1;
+  min-height:260px;
   display:flex;
   align-items:center;
   justify-content:center;
+  padding:24px;
   opacity:0;
   animation: slide-in-l 540ms 200ms var(--ease) forwards;
 }
-.diagram-box svg { width:88%; max-width:320px; height:auto; overflow:visible; }
+.diagram-box svg { width:100%; height:100%; overflow:visible; display:block; }
 .col-text { opacity:0; animation: rise 500ms 340ms var(--ease) forwards; }
 .col-text .t-body { margin-top:16px; font-size:var(--fs-sm); }
 
@@ -834,6 +836,107 @@ body {
 .progress-rail { height:4px; background:var(--layer-02); flex-shrink:0; }
 .progress-fill { height:100%; background:var(--ibm); transition:width 420ms var(--ease); }
 
+
+/* ═══════════════════════════════════════════
+   SLIDE AGENDA
+═══════════════════════════════════════════ */
+.agenda-layout {
+  display:grid;
+  grid-template-columns:1.4fr 0.6fr;
+  gap:32px;
+  flex:1;
+  align-items:start;
+  min-height:0;
+}
+.agenda-list {
+  display:flex;
+  flex-direction:column;
+  gap:0;
+}
+.agenda-item {
+  display:grid;
+  grid-template-columns:48px 1fr auto;
+  align-items:center;
+  gap:20px;
+  padding:14px 0;
+  border-bottom:1px solid var(--border);
+  position:relative;
+  transition:background 160ms;
+  cursor:default;
+}
+.agenda-item:first-child { border-top:1px solid var(--border); }
+.agenda-item::before {
+  content:'';
+  position:absolute;
+  left:-40px; top:0; bottom:0;
+  width:0;
+  background:var(--ibm);
+  transition:width 200ms var(--ease);
+}
+.agenda-item:hover::before { width:3px; }
+.agenda-item:hover { background:var(--layer-01); margin:0 -40px; padding-left:40px; padding-right:40px; }
+.agenda-num {
+  font-size:var(--fs-sm);
+  font-weight:700;
+  color:var(--ibm);
+  letter-spacing:0.08em;
+  line-height:1;
+}
+.agenda-body { display:flex; flex-direction:column; gap:3px; }
+.agenda-title {
+  font-size:var(--fs-md);
+  font-weight:500;
+  color:var(--text);
+  line-height:1.2;
+}
+.agenda-sub {
+  font-size:var(--fs-sm);
+  color:var(--text-3);
+  font-weight:400;
+}
+.agenda-tag {
+  font-size:var(--fs-sm);
+  font-weight:500;
+  color:var(--text-3);
+  text-align:right;
+  white-space:nowrap;
+  opacity:0.6;
+}
+.agenda-info { display:flex; flex-direction:column; }
+.agenda-meta-card {
+  background:var(--layer-01);
+  border:1px solid var(--border);
+  padding:20px;
+  position:relative;
+}
+.agenda-meta-card::before {
+  content:'';
+  position:absolute;
+  top:0; left:0;
+  width:10px; height:10px;
+  border-top:2px solid var(--ibm);
+  border-left:2px solid var(--ibm);
+}
+.agenda-presenters {
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+.agenda-presenters span {
+  font-size:var(--fs-sm);
+  font-weight:500;
+  color:var(--text);
+  line-height:1.3;
+}
+
+/* stagger agenda items */
+.slide.active .agenda-list .agenda-item:nth-child(1) { animation:rise 500ms  80ms var(--ease) forwards; opacity:0; transform:translateY(16px); }
+.slide.active .agenda-list .agenda-item:nth-child(2) { animation:rise 500ms 140ms var(--ease) forwards; opacity:0; transform:translateY(16px); }
+.slide.active .agenda-list .agenda-item:nth-child(3) { animation:rise 500ms 200ms var(--ease) forwards; opacity:0; transform:translateY(16px); }
+.slide.active .agenda-list .agenda-item:nth-child(4) { animation:rise 500ms 260ms var(--ease) forwards; opacity:0; transform:translateY(16px); }
+.slide.active .agenda-list .agenda-item:nth-child(5) { animation:rise 500ms 320ms var(--ease) forwards; opacity:0; transform:translateY(16px); }
+.slide.active .agenda-list .agenda-item:nth-child(6) { animation:rise 500ms 380ms var(--ease) forwards; opacity:0; transform:translateY(16px); }
+
 /* ═══════════════════════════════════════════
    RESPONSIVE — 4 breakpoints
 ═══════════════════════════════════════════ */
@@ -846,6 +949,9 @@ body {
 }
 
 @media (max-width: 860px) {
+  .agenda-layout { grid-template-columns:1fr; }
+  .agenda-info { display:none; }
+  .agenda-item:hover { margin:0; padding-left:0; padding-right:0; }
   body { overflow:auto; }
   .shell { height:auto; min-height:100vh; grid-template-rows:48px 1fr 52px 4px; }
   .slides-area { min-height:580px; }
@@ -888,7 +994,7 @@ body {
       <path fill="#0f62fe" d="M407.85,149.79c0-4.91,3.74-8.65,8.4-8.65s8.4,3.74,8.4,8.65-3.74,8.65-8.4,8.65-8.4-3.74-8.4-8.65ZM422.68,150.34v-1.09c0-3.53-2.77-6.3-6.43-6.3s-6.43,2.77-6.43,6.3v1.09c0,3.53,2.77,6.3,6.43,6.3s6.43-2.77,6.43-6.3ZM414.99,154.25h-2.14v-8.78h3.99c1.97,0,2.98,1.18,2.98,2.77,0,1.39-.63,2.27-1.6,2.65l1.97,3.36h-2.35l-1.64-3.02h-1.22v3.02ZM416.59,149.63c.67,0,1.05-.29,1.05-.92v-.63c0-.63-.38-.92-1.05-.92h-1.6v2.48h1.6ZM0,147h77v11H0v-11ZM0,137h77v-11H0v11ZM22,116h33v-11H22v11ZM22,95h33v-11H22v11ZM22,74h33v-11H22v11ZM55,42H22v11h33v-11ZM0,32h77v-11H0v11ZM0,11h77V0H0v11ZM88,137h117.37c1.97-3.4,3.47-7.09,4.43-11h-121.79v11ZM196.18,84h-86.18v11h95.36c-2.42-4.17-5.52-7.89-9.18-11ZM110,63v11h86.18c3.65-3.11,6.76-6.83,9.18-11h-95.36ZM205.37,21h-117.37v11h121.79c-.96-3.91-2.46-7.6-4.43-11ZM169,0h-81v11h109.33c-7.47-6.83-17.41-11-28.33-11ZM110,53h33v-11h-33v11ZM174,53h35.53c.95-3.51,1.47-7.19,1.47-11h-37v11ZM110,116h33v-11h-33v11ZM174,105v11h37c0-3.81-.52-7.49-1.47-11h-35.53ZM88,158h81c11,0,20.86-4.17,28.33-11h-109.33v11ZM308,158l3.82-11h-7.65l3.82,11ZM300.67,137h14.67l3.86-11h-22.39l3.86,11ZM293.29,116h29.41l3.86-11h-37.14l3.86,11ZM285.92,95h44.16l3.86-11h-51.88l3.86,11ZM242,53h59.43l-3.83-11h-55.61v11ZM321.87,32h74.13v-11h-70.3s-3.83,11-3.83,11ZM333,0l-3.82,11h66.82V0h-63ZM220,158h55v-11h-55v11ZM220,137h55v-11h-55v11ZM242,116h33v-11h-33v11ZM242,95h33v-11h-33v11ZM374,42h-55.6l-3.83,11h59.43v-11ZM341,74h33v-11h-62.91l-3.09,8.89-3.09-8.89h-62.91v11h33v-10.11l3.55,10.11h58.9l3.55-10.11v10.11ZM374,84h-33v11h33v-11ZM341,116h33v-11h-33v11ZM341,137h55v-11h-55v11ZM341,158h55v-11h-55v11ZM294.13,32l-3.83-11h-70.3v11h74.13ZM286.83,11l-3.83-11h-63v11h66.83Z"/>
     </svg>
     <span class="brand-sep"></span>
-    <span>Seminário · Arquiteturas Híbridas</span>
+    <span>Seminário · Arquitetura e Sistemas Distribuídos</span>
   </div>
   <div class="counter"><b id="cur">01</b>/<span id="tot">10</span></div>
 </header>
@@ -899,24 +1005,24 @@ body {
   <!-- 1 · CAPA -->
   <section class="slide active cover-slide" data-title="Título">
     <div class="cover-left">
-      <p class="eyebrow">Computação distribuída</p>
+      <p class="eyebrow">Arquitetura e Sistemas Distribuídos</p>
       <h1 class="t-heading">Arquiteturas<br/><strong>Híbridas</strong></h1>
       <p class="t-body">Combinações de cliente-servidor,<br/>P2P, edge e cloud</p>
       <div class="cover-meta">
         <div class="cover-meta-cell">
-          <span class="t-label">Apresentadora</span>
+          <span class="t-label">Apresentadora #1</span>
           <span class="val">Maria Eduarda Eguchi</span>
         </div>
         <div class="cover-meta-cell">
-          <span class="t-label">Apresentador</span>
+          <span class="t-label">Apresentador #2</span>
           <span class="val">Matheus Musashi</span>
         </div>
         <div class="cover-meta-cell">
-          <span class="t-label">Apresentador</span>
+          <span class="t-label">Apresentador #3</span>
           <span class="val">Kaike Vitorino</span>
         </div>
         <div class="cover-meta-cell">
-          <span class="t-label">Apresentadora</span>
+          <span class="t-label">Apresentadora #4</span>
           <span class="val">Livia Lemos</span>
         </div>
       </div>
@@ -957,7 +1063,72 @@ body {
     </div>
   </section>
 
-  <!-- 2 · INTRODUÇÃO -->
+
+  <!-- 2 · AGENDA -->
+  <section class="slide" data-title="Agenda">
+    <div class="animate-children">
+      <p class="eyebrow">Agenda</p>
+      <h2 class="t-heading">O que vamos <strong>percorrer</strong></h2>
+    </div>
+    <div class="agenda-layout" style="margin-top:28px;">
+      <div class="agenda-list animate-children">
+        <div class="agenda-item">
+          <span class="agenda-num">01</span>
+          <div class="agenda-body">
+            <span class="agenda-title">Introdução</span>
+            <span class="agenda-sub">Por que arquiteturas híbridas existem?</span>
+          </div>
+          <span class="agenda-tag">Contexto</span>
+        </div>
+        <div class="agenda-item">
+          <span class="agenda-num">02</span>
+          <div class="agenda-body">
+            <span class="agenda-title">Quatro blocos</span>
+            <span class="agenda-sub">Cliente-servidor, P2P, Edge e Cloud</span>
+          </div>
+          <span class="agenda-tag">Conceitos</span>
+        </div>
+        <div class="agenda-item">
+          <span class="agenda-num">03</span>
+          <div class="agenda-body">
+            <span class="agenda-title">Combinações híbridas</span>
+            <span class="agenda-sub">Como os modelos se integram na prática</span>
+          </div>
+          <span class="agenda-tag">Desenvolvimento</span>
+        </div>
+        <div class="agenda-item">
+          <span class="agenda-num">04</span>
+          <div class="agenda-body">
+            <span class="agenda-title">Trade-offs</span>
+            <span class="agenda-sub">Benefícios, custos e como decidir</span>
+          </div>
+          <span class="agenda-tag">Análise</span>
+        </div>
+        <div class="agenda-item">
+          <span class="agenda-num">05</span>
+          <div class="agenda-body">
+            <span class="agenda-title">Exemplos reais</span>
+            <span class="agenda-sub">Videoconferência e IoT industrial</span>
+          </div>
+          <span class="agenda-tag">Exemplos</span>
+        </div>
+        <div class="agenda-item">
+          <span class="agenda-num">06</span>
+          <div class="agenda-body">
+            <span class="agenda-title">Conclusão</span>
+            <span class="agenda-sub">Síntese e considerações finais</span>
+          </div>
+          <span class="agenda-tag">Fechamento</span>
+        </div>
+      </div>
+      <div class="agenda-info">
+    </div>
+    <div class="slide-footer" style="margin-top:auto;">
+      <span>Agenda</span><span>02 / 11</span>
+    </div>
+  </section>
+
+  <!-- 3 · INTRODUÇÃO -->
   <section class="slide" data-title="Introdução">
     <div class="animate-children">
       <p class="eyebrow">Introdução</p>
@@ -977,7 +1148,7 @@ body {
     </div>
     <div class="slide-footer animate-children" style="margin-top:auto;">
       <span>Computação distribuída</span>
-      <span>02 / 10</span>
+      <span>03 / 11</span>
     </div>
   </section>
 
@@ -1014,7 +1185,7 @@ body {
       </article>
     </div>
     <div class="slide-footer animate-children" style="margin-top:auto;">
-      <span>Conceitos-base</span><span>03 / 10</span>
+      <span>Conceitos-base</span><span>04 / 11</span>
     </div>
   </section>
 
@@ -1055,7 +1226,7 @@ body {
       </div>
     </div>
     <div class="slide-footer animate-children" style="margin-top:auto;">
-      <span>Desenvolvimento · 1 de 3</span><span>04 / 10</span>
+      <span>Desenvolvimento · 1 de 3</span><span>05 / 11</span>
     </div>
   </section>
 
@@ -1094,7 +1265,7 @@ body {
       </div>
     </div>
     <div class="slide-footer animate-children" style="margin-top:auto;">
-      <span>Desenvolvimento · 2 de 3</span><span>05 / 10</span>
+      <span>Desenvolvimento · 2 de 3</span><span>06 / 11</span>
     </div>
   </section>
 
@@ -1133,7 +1304,7 @@ body {
       </div>
     </div>
     <div class="slide-footer animate-children" style="margin-top:auto;">
-      <span>Desenvolvimento · 3 de 3</span><span>06 / 10</span>
+      <span>Desenvolvimento · 3 de 3</span><span>07 / 11</span>
     </div>
   </section>
 
@@ -1161,7 +1332,7 @@ body {
       </div>
     </div>
     <div class="slide-footer animate-children" style="margin-top:auto;">
-      <span>Análise de trade-offs</span><span>07 / 10</span>
+      <span>Análise de trade-offs</span><span>08 / 11</span>
     </div>
   </section>
 
@@ -1195,7 +1366,7 @@ body {
     </div>
     <p class="t-body" style="font-size:var(--fs-sm);color:var(--text-3);margin-top:16px;opacity:0;animation:rise 500ms 400ms var(--ease) forwards;">→ O resultado é uma experiência fluida com coordenação central para segurança e gerenciamento.</p>
     <div class="slide-footer animate-children" style="margin-top:auto;">
-      <span>Exemplo 1 de 2</span><span>08 / 10</span>
+      <span>Exemplo 1 de 2</span><span>09 / 11</span>
     </div>
   </section>
 
@@ -1228,7 +1399,7 @@ body {
       </div>
     </div>
     <div class="slide-footer animate-children" style="margin-top:auto;">
-      <span>Exemplo 2 de 2</span><span>09 / 10</span>
+      <span>Exemplo 2 de 2</span><span>10 / 11</span>
     </div>
   </section>
 
@@ -1263,7 +1434,7 @@ body {
       </div>
       <div class="slide-footer animate-children" style="margin-top:auto;">
         <span>Arquiteturas Híbridas · Computação distribuída</span>
-        <span>10 / 10</span>
+        <span>11 / 11</span>
       </div>
     </div>
   </section>
@@ -1294,7 +1465,8 @@ const fillEl  = document.getElementById('progressFill');
 const N = slides.length;
 let idx = 0, busy = false;
 
-document.getElementById('tot').textContent = String(N).padStart(2,'0');
+// total set dynamically
+  document.getElementById('tot').textContent = String(N).padStart(2,'0');
 
 slides.forEach((s,i) => {
   const d = document.createElement('div');
